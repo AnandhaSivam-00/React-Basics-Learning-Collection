@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import './ChiefMistral.css'
 // import { chiefMistralLogo } from '../../assets/ChiefMistralLogo.jpg'
 import { PlusIcon } from '../../assets/Icons'
+import  ChiefMistralLogo from '../../assets/ChiefMistralLogo.jpg'
 
 import { getRecipeFromMistral } from './AiModel'
 
@@ -12,7 +13,7 @@ const Header = () => {
         <header 
             className='d-flex justify-content-center align-items-center sticky-top mb-3 cc-header'
         >
-            <img src='src/assets/ChiefMistralLogo.jpg' alt='Logo' className='cc-logo'/>
+            <img src={ChiefMistralLogo} alt='Logo' className='cc-logo'/>
             <h1 className='text-white'>Chief Mistral</h1>
         </header>
     )
