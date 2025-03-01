@@ -1,0 +1,14 @@
+.meme-header {
+    background-color: blueviolet;
+    box-shadow: 1px 3px 7px 1px rgba(128, 128, 128, 0.793);
+}
+
+/* .btn-primary {
+    background-color: blueviolet !important;
+    border-color: blueviolet !important;
+
+    &:hover {
+        background-color: rgba(137, 43, 226, 0.838) !important;
+        border-color: rgba(137, 43, 226, 0.837) !important;
+    }
+} */

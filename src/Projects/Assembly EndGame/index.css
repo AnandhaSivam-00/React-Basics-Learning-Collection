@@ -1,0 +1,92 @@
+.endgame-main {
+    height: 120vh;
+    width: 100%;
+}
+
+.game-won {
+    background-color: #10A95B;
+    width: 35%;
+    border-radius: 0.5rem;
+}
+
+.game-lost {
+    background-color: #EC5D49;
+    width: 35%;
+    border-radius: 0.5rem;
+}
+
+.wrong-selection {
+    background-color: #7A5EA7;
+    width: 75%;
+    border-radius: 0.5rem;
+    border: 1px dashed rgba(255, 255, 255, 0.927)
+}
+
+.language-section {
+    max-width: 30em;
+}
+
+.lost {
+    position: relative;
+}
+
+.lost::before {
+    content: "💀";
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    font-size: 0.85rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+span.letter-box {
+    background-color: #323232;
+    color: white;
+    border-bottom: 2px solid #f9f4f9;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+span.missed-letter-style {
+    background-color: #454545;
+    color: #EC5D49;
+    border-bottom: 2px solid #EC5D49;
+}
+
+section > button {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #FCBA29 !important;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #FFD700 !important;
+    }
+
+    &:disabled {
+        cursor: not-allowed !important;
+    }
+
+    &:active {
+       box-shadow: 0 0 0 0.2rem rgba(194, 219, 254, 0.785) !important;
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(194, 219, 254, 0.785) !important;
+    }
+}
+
+section > button.correct {
+    background-color: #10A95B !important;
+}
+
+section > button.wrong {
+    background-color: #EC5D49 !important;
+}
+
