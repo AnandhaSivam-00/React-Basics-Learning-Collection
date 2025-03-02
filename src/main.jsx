@@ -7,6 +7,6 @@ import RouterApp from './RouterApp.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <App />
+    <RouterApp />
   </BrowserRouter>
 )

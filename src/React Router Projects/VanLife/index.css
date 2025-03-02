@@ -40,6 +40,10 @@ footer > p {
     display: inline-block;
 }
 
+a {
+    text-decoration: none !important;
+}
+
 .about div  a {
     background-color: #161616;
 
@@ -72,10 +76,43 @@ footer > p {
     }
 }
 
-.card .card-body > span {
-    background-color: #E17654 !important;
+.btn-filter {
+    background-color: #FFEAD0;
+    color: #4D4D4D;
+
+    &:hover {
+        background-color: #FFD699;
+    }
+}
+
+div > .btn-filter:last-child {
+    background-color: white;
+    color: #4D4D4D;
+    text-decoration: underline;
+}
+
+.card .card-body > span, .van-details > article > span {
     color: #FFEAD0 !important;
     font-size: 16px !important;
     font-weight: 600 !important;
     padding: 10px 15px;
+}
+
+.badge-simple {
+    background-color: #E17654 !important;
+}
+
+.badge-luxury {
+    background-color: #161616 !important;
+}
+
+.badge-rugged {
+    background-color: #115E59 !important;
+}
+
+.van-details > article > div button {
+    background-color: #FF8C38;
+    margin: 15px auto;
+    color: #FFFFFF;
+    font-weight: 700;
 }
