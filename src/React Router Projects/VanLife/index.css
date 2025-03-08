@@ -4,6 +4,20 @@
     font-family: 'inter', sans-serif;
 }
 
+html, body {
+    height: 100%;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
 header nav {
     background-color: #FFF7ED;
 }
@@ -14,14 +28,18 @@ header > nav div > a {
 
     &:active {
         color: #161616;
-        text-decoration: underline;
     }
 
     &:hover {
         color: #161616;
-        text-decoration: underline;
     }
 }
+
+.nav-active {
+    border-bottom: 3px solid #161616;
+    color: #161616;
+}
+
 
 footer {
     background-color: #252525;
@@ -85,10 +103,14 @@ a {
     }
 }
 
-div > .btn-filter:last-child {
+div > .btn-filter-clear {
     background-color: white;
     color: #4D4D4D;
     text-decoration: underline;
+}
+
+.btn-filter-selected {
+    background-color: #FFD699;
 }
 
 .card .card-body > span, .van-details > article > span {
@@ -115,4 +137,19 @@ div > .btn-filter:last-child {
     margin: 15px auto;
     color: #FFFFFF;
     font-weight: 700;
+}
+
+div > nav > a, section > article > div a {
+    text-decoration: none;
+    color: #4D4D4D;
+
+    &:active {
+        color: #161616;
+        text-decoration: underline;
+    }
+
+    &:hover {
+        color: #161616;
+        text-decoration: underline;
+    }
 }

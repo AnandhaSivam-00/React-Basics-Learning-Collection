@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useLocation, Link } from 'react-router-dom'
 
-import '../index.css';
+import '../../index.css';
 
-import '../server/server';
+import '../../server/server';
 
 const VanDetails = () => {
     const { id } = useParams(); // {id: "1"}
+    const location = useLocation(); // {pathname: "/1", search: "", hash: "", state: undefined, key: "1"}
+
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -17,9 +19,17 @@ const VanDetails = () => {
 
   return (
     <section className='container-fluid van-details' style={{marginTop: "100px"}}>
-        <div className='mt-5 p-2'>
-            <Link to='/vans' className='text-black'>Back to all vans</Link>
-        </div>
+          <div className='mt-5 p-2'>
+              <Link
+                  to={`..?${location.state?.search || ''}`} // ? --> important to note this
+                  // I used the conditional chaining operator to avoid an error if location.state is undefined
+                  // that's equal to location.state && location.state.search
+                  relative='path'
+                  className='text-black text-decoration-underline'
+              >
+                  &lt; Back to {location.state?.type || 'all'} vans
+              </Link>
+          </div>
           <article className='my-3'>
               <div className='row'>
                   <div className='col-12 col-md-6 col-sm-12 d-flex justify-content-center'>

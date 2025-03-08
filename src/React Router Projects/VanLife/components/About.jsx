@@ -19,7 +19,7 @@ const About = () => {
       <div className='d-flex justify-content-center align-items-center mb-3'>
         <div className='mt-3 p-4 shadow rounded explore-section'>
           <h4>Your destination is waiting.<br /> Your van is ready.</h4>
-          <Link to="/" className='btn text-white mt-2'>Explore our vans</Link>
+          <Link to="/vans" className='btn text-white mt-2'>Explore our vans</Link>
         </div>
       </div>
     </section>
