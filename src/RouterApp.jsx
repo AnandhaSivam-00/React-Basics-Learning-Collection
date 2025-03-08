@@ -8,6 +8,7 @@ import {
 import Home from './React Router Projects/VanLife/components/Home.jsx'
 import About from './React Router Projects/VanLife/components/About.jsx'
 import Errors from './React Router Projects/VanLife/components/Errors.jsx'
+import Login from './React Router Projects/VanLife/components/Login.jsx'
 
 import VansList, {vansLoader} from './React Router Projects/VanLife/components/Vans/VansList.jsx'
 import VanDetails from './React Router Projects/VanLife/components/Vans/VanDetails.jsx'
@@ -31,6 +32,7 @@ import {
 const router = createBrowserRouter(createRoutesFromElements(
     <Route path='/' element={<MainLayout />} >
         <Route index element={<Home />} />
+        <Route path='login' element={<Login />} />
         <Route path="about" element={<About />} />
         <Route 
             path="vans" 

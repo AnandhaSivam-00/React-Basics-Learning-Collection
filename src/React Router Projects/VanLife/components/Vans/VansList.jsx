@@ -51,9 +51,7 @@ const VansList = () => {
                 />
             </Link>
         </div>
-    )).catch((error) => {
-        console.log(error);
-    });
+    ));
 
     return (
         <section className='container-fluid' style={{ marginTop: "100px" }}>

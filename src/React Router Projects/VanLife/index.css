@@ -94,6 +94,17 @@ a {
     }
 }
 
+.login-container {
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container > div {
+    margin: 0 auto;
+    background-color: #FFF7ED;
+}
+
 .btn-filter {
     background-color: #FFEAD0;
     color: #4D4D4D;
