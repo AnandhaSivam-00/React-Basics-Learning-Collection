@@ -3,11 +3,13 @@ import { useSearchParams, Link, useLoaderData } from 'react-router-dom'
 
 import '../../server/server';
 import { getVans } from '../../server/ApiCalls'
+import { requireAuth } from '../../server/utils';
 import Card from '../Card';
 
 import '../../index.css';
 
-export const vansLoader = () => {
+export const vansLoader = async ({ request }) => {
+    await requireAuth(request);
     return getVans();
 }
 

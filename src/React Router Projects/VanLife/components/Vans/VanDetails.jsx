@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, useLoaderData } from 'react-router-dom'
 
 import '../../index.css';
-
 import '../../server/server';
+import { getVans } from '../../server/ApiCalls';
+import { requireAuth } from '../../server/utils';
+
+export const vanDetailsLoader = async ({ params, request }) => {
+    await requireAuth(request);
+    return getVans(params.id);
+}
 
 const VanDetails = () => {
-    const { id } = useParams(); // {id: "1"}
     const location = useLocation(); // {pathname: "/1", search: "", hash: "", state: undefined, key: "1"}
 
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        fetch(`/api/vans/${id}`)
-            .then(response => response.json())
-            .then(data => setData(data.vans));
-    }, [id]);
+    const data = useLoaderData();
 
   return (
     <section className='container-fluid van-details' style={{marginTop: "100px"}}>

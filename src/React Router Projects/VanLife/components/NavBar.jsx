@@ -5,6 +5,11 @@ import '../index.css';
 import BrandLogo from '../assets/Images/vanlife-logo.png'
 
 const NavBar = () => {
+  const fakeLogout = () => {
+    localStorage.clear();
+    window.location.href = '/';
+  }
+
   return (
     <header>
       <nav className='navbar fixed-top py-3'>
@@ -38,6 +43,7 @@ const NavBar = () => {
             >
               Vans
             </NavLink>
+            <button onClick={fakeLogout} className='btn btn-outline-light mx-auto'>Logout</button>
           </div>
         </div>
       </nav>

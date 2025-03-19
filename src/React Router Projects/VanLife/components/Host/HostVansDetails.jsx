@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, NavLink, Link, Outlet, useOutletContext } from 'react-router-dom';
+import { useParams, NavLink, Link, Outlet, useOutletContext, useLoaderData } from 'react-router-dom';
 import '../../index.css'
+
+import { getHostVans } from '../../server/ApiCalls';
+import { requireAuth } from '../../server/utils';
+
+export const hostVanDetailLoader = async ({ params, request }) => {
+  await requireAuth(request);
+  return getHostVans(params.id);
+}
 
 export const HostVanPricing = () => {
   const { currentVan } = useOutletContext();
@@ -36,27 +44,7 @@ export const HostVanDetail = () => {
 }
 
 const HostVansDetails = () => {
-  const { id } = useParams();
-  const [vanData, setVanData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetch(`/api/host/vans/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        setVanData(data.vans[0]);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching van data:", err);
-        setError("Failed to fetch van data");
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const vanData = useLoaderData()[0];
 
   return (
     <section className='container-fluid van-details'>
@@ -86,7 +74,7 @@ const HostVansDetails = () => {
                         height="190.35px"
                       />
                   </div>
-                  <div className='col-6 col-md-6 col-sm-6 mx-auto'>
+                  <div className='col-6 col-md-6 col-sm-6 d-flex flex-column justify-content-start align-items-start'>
                       <span className={`badge badge-${vanData.type} p-2 mt-4`}>{
                           vanData.type === 'simple' ? "Simple" : vanData.type === 'luxury' ? "Luxury" :
                               vanData.type === 'rugged' ? "Rugged" : null
