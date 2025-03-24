@@ -1,34 +1,32 @@
-import { useLocation, Link, useLoaderData } from 'react-router-dom'
+import React, { Suspense } from 'react';
+import { 
+    useLocation, 
+    Link, 
+    useLoaderData, 
+    Await
+} from 'react-router-dom'
 
 import '../../index.css';
 import '../../server/server';
-import { getVans } from '../../server/ApiCalls';
+import { getVan } from '../../server/ApiCalls';
 import { requireAuth } from '../../server/utils';
 
 export const vanDetailsLoader = async ({ params, request }) => {
     await requireAuth(request);
-    return getVans(params.id);
+    return {
+        vanData: getVan(params.id)
+    };
 }
 
 const VanDetails = () => {
     const location = useLocation(); // {pathname: "/1", search: "", hash: "", state: undefined, key: "1"}
 
-    const data = useLoaderData();
+    const { vanData } = useLoaderData();
+    console.log(vanData.imageUrl);
 
-  return (
-    <section className='container-fluid van-details' style={{marginTop: "100px"}}>
-          <div className='mt-5 p-2'>
-              <Link
-                  to={`..?${location.state?.search || ''}`} // ? --> important to note this
-                  // I used the conditional chaining operator to avoid an error if location.state is undefined
-                  // that's equal to location.state && location.state.search
-                  relative='path'
-                  className='text-black text-decoration-underline'
-              >
-                  &lt; Back to {location.state?.type || 'all'} vans
-              </Link>
-          </div>
-          <article className='my-3'>
+    const renderVanData = (data) => {
+        return (
+            <article className='my-3'>
               <div className='row'>
                   <div className='col-12 col-md-6 col-sm-12 d-flex justify-content-center'>
                       <img 
@@ -51,6 +49,27 @@ const VanDetails = () => {
                   </div>
               </div>
           </article>
+        )
+    }
+
+  return (
+    <section className='container-fluid van-details' style={{marginTop: "100px"}}>
+          <div className='mt-5 p-2'>
+              <Link
+                  to={`..?${location.state?.search || ''}`} // ? --> important to note this
+                  // I used the conditional chaining operator to avoid an error if location.state is undefined
+                  // that's equal to location.state && location.state.search
+                  relative='path'
+                  className='text-black text-decoration-underline'
+              >
+                  &lt; Back to {location.state?.type || 'all'} vans
+              </Link>
+          </div>
+          <Suspense fallback={<p className="text-center my-5">Loading van details...</p>}>
+            <Await resolve={vanData}>
+                {renderVanData}
+            </Await>
+          </Suspense>
     </section>
   )
 }
