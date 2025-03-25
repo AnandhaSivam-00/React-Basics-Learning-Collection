@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HappyDays = () => {
     const time = new Date();
@@ -30,8 +31,28 @@ const HappyDays = () => {
     <div className='container-fluid'>
         <div className='row'>
             <div className='col-12 text-center'>
-            <h1>{dayMessage}</h1>
+                <h1>{dayMessage}</h1>
             </div>
+        </div>
+        <div className="d-flex flex-row justify-content-center align-items-center mt-3">
+            <Link to="/chief-mistral">
+                <button className="btn btn-primary me-3">Chief Mistral</button>
+            </Link>
+            <Link to="/reactfacts">
+                <button className="btn btn-primary me-3">React Facts</button>
+            </Link>
+            <Link to="/travel-journal">
+                <button className="btn btn-primary me-3">Travel Journal</button>
+            </Link>
+            <Link to="/tenzies-game">
+                <button className="btn btn-primary me-3">Tenzies Game</button>
+            </Link>
+            <Link to="/assembly-endgame">
+                <button className="btn btn-primary me-3">Assembly Endgame</button>
+            </Link>
+            <Link to="/vanslife">
+                <button className="btn btn-primary">VansLife</button>
+            </Link>
         </div>
     </div>
   )
