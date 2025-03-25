@@ -1,0 +1,10 @@
+.travel-header {
+    background-color: #F72C5B;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.travel-header > h1 {
+    color: #FFEFC8;
+    font-weight: bolder;
+}

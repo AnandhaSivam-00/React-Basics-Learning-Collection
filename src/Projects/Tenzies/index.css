@@ -1,0 +1,64 @@
+* {
+    box-sizing: border-box;
+}
+
+div #root {
+    height: 100%;
+}
+
+.tenzies-body {
+    margin: 0;
+    padding: 2rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #0B2434;
+}
+
+.tenzies-main {
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    max-width: 35rem;
+    max-height: 35rem;
+}
+
+.tenzies-header .heading {
+    font-size: 2.7rem;
+    font-weight: bold;
+}
+
+.die-container {
+    /* background-color: bisque; */
+    padding: 2rem;
+    width: 100%;
+}
+
+.die-container .col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.die-outer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3rem;
+    width: 3rem;
+    border: none;
+    font-size: 1.75rem !important;
+    font-weight: bold !important;
+    /* box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15); */
+}
+
+.die-roll-btn {
+    background-color: rgb(136, 44, 222) !important;
+    color: white !important;
+    font-size: 1.3rem !important;
+    font-weight: bold !important;
+
+    &:hover {
+        background-color: rebeccapurple !important;
+    }
+}
