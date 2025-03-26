@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import AboutPics from '../assets/Images/van-camp.png'
+
 const About = () => {
   return (
-    <section className='about'>
+    <section className='about' style={{marginTop: "80px"}}>
       <div className='row m-0 p-0'>
           <img
-            src='src/React Router Projects/VanLife/assets/Images/van-camp.png'
+            src={AboutPics}
             alt='van with a camp image'
             className='img-fluid col-12 col-sm-12 col-md-6 m-0 p-0'
           />
@@ -19,7 +21,7 @@ const About = () => {
       <div className='d-flex justify-content-center align-items-center mb-3'>
         <div className='mt-3 p-4 shadow rounded explore-section'>
           <h4>Your destination is waiting.<br /> Your van is ready.</h4>
-          <Link to="/" className='btn text-white mt-2'>Explore our vans</Link>
+          <Link to="/vans" className='btn text-white mt-2'>Explore our vans</Link>
         </div>
       </div>
     </section>

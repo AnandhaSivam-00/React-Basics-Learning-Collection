@@ -4,6 +4,20 @@
     font-family: 'inter', sans-serif;
 }
 
+html, body {
+    height: 100%;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
 header nav {
     background-color: #FFF7ED;
 }
@@ -14,14 +28,18 @@ header > nav div > a {
 
     &:active {
         color: #161616;
-        text-decoration: underline;
     }
 
     &:hover {
         color: #161616;
-        text-decoration: underline;
     }
 }
+
+.nav-active {
+    border-bottom: 3px solid #161616;
+    color: #161616;
+}
+
 
 footer {
     background-color: #252525;
@@ -38,6 +56,10 @@ footer > p {
 .explore-section {
     background-color: #FFCC8D;
     display: inline-block;
+}
+
+a {
+    text-decoration: none !important;
 }
 
 .about div  a {
@@ -72,10 +94,73 @@ footer > p {
     }
 }
 
-.card .card-body > span {
-    background-color: #E17654 !important;
+.login-container {
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container > div {
+    margin: 0 auto;
+    background-color: #FFF7ED;
+}
+
+.btn-filter {
+    background-color: #FFEAD0 !important;
+    color: #4D4D4D;
+
+    &:hover {
+        background-color: #FFD699 !important;
+    }
+}
+
+div > .btn-filter-clear {
+    background-color: white;
+    color: #4D4D4D;
+    text-decoration: underline;
+}
+
+.btn-filter-selected {
+    background-color: #FFD699 !important;
+}
+
+.card .card-body > span, .van-details > article > span {
     color: #FFEAD0 !important;
     font-size: 16px !important;
     font-weight: 600 !important;
     padding: 10px 15px;
+}
+
+.badge-simple {
+    background-color: #E17654 !important;
+}
+
+.badge-luxury {
+    background-color: #161616 !important;
+}
+
+.badge-rugged {
+    background-color: #115E59 !important;
+}
+
+.van-details > article > div button {
+    background-color: #FF8C38;
+    margin: 15px auto;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+div > nav > a, section > article > div a {
+    text-decoration: none;
+    color: #4D4D4D;
+
+    &:active {
+        color: #161616;
+        text-decoration: underline;
+    }
+
+    &:hover {
+        color: #161616;
+        text-decoration: underline;
+    }
 }
