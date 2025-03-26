@@ -106,11 +106,11 @@ a {
 }
 
 .btn-filter {
-    background-color: #FFEAD0;
+    background-color: #FFEAD0 !important;
     color: #4D4D4D;
 
     &:hover {
-        background-color: #FFD699;
+        background-color: #FFD699 !important;
     }
 }
 
@@ -121,7 +121,7 @@ div > .btn-filter-clear {
 }
 
 .btn-filter-selected {
-    background-color: #FFD699;
+    background-color: #FFD699 !important;
 }
 
 .card .card-body > span, .van-details > article > span {

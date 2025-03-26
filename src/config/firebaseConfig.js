@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBZiy2ppIrgwNzP1f2C4ONdhXCNUYL3vXY",
-  authDomain: "sample-training-react-app.firebaseapp.com",
-  projectId: "sample-training-react-app",
-  storageBucket: "sample-training-react-app.firebasestorage.app",
-  messagingSenderId: "578503748406",
-  appId: "1:578503748406:web:e8d11a1233155a6203a197"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
