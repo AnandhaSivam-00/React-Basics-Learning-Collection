@@ -17,13 +17,13 @@ export const loginLoader = async ({ request }) => {
   const url = new URL(request.url);
   return {
     message: url.searchParams.get('message'),
-    redirectTo: url.searchParams.get('redirectTo') || '/host'
+    redirectTo: url.searchParams.get('redirectTo') || '/vanslife/host'
   }
 }
 
 export const loginAction = async ({ request }) => {
   const userCrenditals = await request.formData();
-  const pathName = new URL(request.url).searchParams.get('redirectTo') || '/host';
+  const pathName = new URL(request.url).searchParams.get('redirectTo') || '/vanslife/host';
 
   const email = userCrenditals.get('email');
   const password = userCrenditals.get('password');
