@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import AboutPics from '../assets/Images/van-camp.png'
+
 const About = () => {
   return (
     <section className='about' style={{marginTop: "80px"}}>
       <div className='row m-0 p-0'>
           <img
-            src='src/React Router Projects/VanLife/assets/Images/van-camp.png'
+            src={AboutPics}
             alt='van with a camp image'
             className='img-fluid col-12 col-sm-12 col-md-6 m-0 p-0'
           />
