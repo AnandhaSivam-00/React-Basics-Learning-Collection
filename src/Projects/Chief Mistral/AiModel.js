@@ -11,6 +11,8 @@ render to a web page
 const hfMistral = new HfInference(import.meta.env.VITE_HUGGING_FACE_MISTRAL_MODEL_API)
 
 export async function getRecipeFromMistral(ingredientsArray) {
+    console.log(import.meta.env.VITE_HUGGING_FACE_MISTRAL_MODEL_API);
+    
     const ingredientString = ingredientsArray.join(", ");
 
     try {
@@ -28,5 +30,6 @@ export async function getRecipeFromMistral(ingredientsArray) {
     }
     catch(error) {
         console.error(error.message);
+        return "Sorry, I couldn't generate a recipe at this time. Please try again later.";
     }
 }

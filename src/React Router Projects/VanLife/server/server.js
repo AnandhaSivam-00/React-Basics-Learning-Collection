@@ -19,8 +19,17 @@ createServer({
     routes() {
         this.namespace = "api"
         this.timing = 1000
+        // Adding a passthrough to allow requests to the actual API
+        // Because the actual API is not part of the Mirage server, we need to 
+        // tell Mirage to let these requests through
         this.passthrough("https://firestore.googleapis.com/**")
         this.passthrough('https://generativelanguage.googleapis.com/**');
+        this.passthrough("https://api-inference.huggingface.co/**")
+        this.passthrough("https://*.hf.space/**")
+        this.passthrough("https://huggingface.co/**")
+        
+        // Disable namespace for external API calls
+        this.urlPrefix = ""
 
         this.get("/vans", (schema, request) => {
             //return new Response(400, {}, {error: "Error fetching data"})
