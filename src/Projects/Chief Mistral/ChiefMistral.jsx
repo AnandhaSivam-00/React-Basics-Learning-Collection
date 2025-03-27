@@ -146,7 +146,7 @@ const MistralRecipe = (props) => {
 }
 
 const MainContent = () => {
-    const [ingredientList, setIngredientList] = useState(['Tomato', 'Cheese', 'Basil']);
+    const [ingredientList, setIngredientList] = useState([]);
     const [recipeShown, setRecipeShown] = useState(false);
     const [recipeIdea, setRecipeIdea] = useState('');
 
