@@ -239,6 +239,7 @@ export const addNewPostData = async ({ mood, post }) => {
 
 export const getUserPosts = async (id) => {
     try {
+        // await new Promise(resolve => setTimeout(resolve, 19000));
         const collectionRef = collection(db, 'Moody', 'moody-users-data', 'Post Data');
         const postsQuery = query(collectionRef, where('user_id', '==', id), orderBy('created_at', 'desc'));
 
@@ -252,7 +253,8 @@ export const getUserPosts = async (id) => {
         const posts = postsSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-        }))
+        }));
+
 
         return posts;
     }

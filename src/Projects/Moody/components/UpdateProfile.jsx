@@ -17,10 +17,13 @@ import {
 
 import '../styles.css'
 import { auth } from '../../../config/firebaseConfig'
+import { requireFirebaseAuth } from '../requireFirebaseAuth'
 
 export const moodyUpdateProfileLoader = async ({ request }) => {
+    await requireFirebaseAuth(request);
+    
     return {
-        data: await getUserData(auth.currentUser.uid)
+        data: getUserData(auth.currentUser.uid)
     }
 }
 
@@ -197,7 +200,11 @@ const UpdateProfile = () => {
         >
             <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto'  }}>
                 <h2 className='text-center'>Update Profile</h2>
-                <Suspense fallback={<p className="text-center my-5">Loading...</p>}>
+                <Suspense fallback={
+                  <div className='text-center text-secondary my-5'>
+                    <span className='moody-loading-text-style'>Loading my Mood...</span>
+                  </div>
+                }>
                     <Await resolve={data}>
                         {({ data }) => {
                             return (

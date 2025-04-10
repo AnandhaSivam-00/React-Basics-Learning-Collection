@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.22.0",
     "@huggingface/inference": "^3.3.4",
+    "@remix-run/router": "^1.23.0",
     "antd": "^5.24.1",
     "bootstrap": "^5.3.3",
     "clsx": "^2.1.1",

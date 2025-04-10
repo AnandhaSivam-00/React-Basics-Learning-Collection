@@ -15,6 +15,9 @@
     height: max-content;
     background-color: #fff6e8;
     overflow-y: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
 }
 
 .fixing-top {
@@ -179,20 +182,37 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .moody-postlist-section {
-    max-height: 650px;
+    max-height: calc(100vh - 170px);
     overflow-y: auto;
     scroll-behavior: smooth;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    /* padding-top: 10px; */
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
     z-index: 0 !important;
-    /* padding-top: 400px !important; */
 }
 
 .moody-postlist-section::-webkit-scrollbar {
-    display: none;
+    display: block;
+    width: 8px;
+    margin-left: 10px;
+}
+
+.moody-postlist-section::-webkit-scrollbar-track {
+    background: #fff6e8;
+    width: 10px;
+}
+
+.moody-postlist-section::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(to bottom, #ffdd00, #ffee838c);
+    border-radius: 5px;
+    backdrop-filter: blur(10px);
 }
 
 .moody-post-card {
     background-color: #ffe6be !important;
+}
+
+.moody-loading-text-style {
+    font-size: larger;
+    font-weight: 400;
+    font-family: 'Calistoga', sans-serif;
 }
