@@ -27,8 +27,11 @@ import { addNewPostData } from '../dataFetchFunctions';
 import { auth } from '../../../config/firebaseConfig';
 
 import { getUserPosts } from '../dataFetchFunctions';
+import { requireFirebaseAuth } from '../requireFirebaseAuth';
 
 export const moodyPostLoader = async ({ request }) => {
+  await requireFirebaseAuth(request);
+  
   return {
     postData: await getUserPosts(auth.currentUser.uid)
   }

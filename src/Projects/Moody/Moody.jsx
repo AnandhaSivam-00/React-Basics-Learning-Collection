@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useLoaderData } from 'react-router-dom'
 import FlexNavBar from './components/FlexNavBar'
 
 import { auth } from '../../config/firebaseConfig'
@@ -13,14 +13,13 @@ const Moody = () => {
 
   useEffect(() => {
     const data = auth.currentUser;
-    console.log('User data:', data);
 
     if(data) {
       setUserData(data);
     }
-    else {
-      navigate('/login', { replace: true });
-    }
+    // else {
+    //   navigate('/login', { replace: true });
+    // }
   }, []);
 
   return (

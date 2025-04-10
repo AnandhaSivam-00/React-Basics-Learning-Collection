@@ -2,8 +2,10 @@ import React, { useEffect } from 'react'
 import {
   Form,
   useActionData,
+  useLoaderData,
   useNavigate,
-  useNavigation
+  useNavigation,
+  useSearchParams
 } from 'react-router-dom'
 import { Server } from 'miragejs'
 
@@ -17,6 +19,16 @@ import {
 } from './dataFetchFunctions'
 
 import './styles.css'
+
+export const moodyLoginLoader = async ({ request }) => {
+  const url = new URL(request.url);
+
+  return {
+    success: false,
+    message: url.searchParams.get('message'),
+    redirectTo: url.searchParams.get('redirectTo') || '/home',
+  }
+}
 
 export const moodyBasicAction = async ({ request }) => {
   const userCredentials = await request.formData();
@@ -113,6 +125,7 @@ const moodyCreateUser = async ({ email, password }) => {
 }
 
 const MoodyLogin = () => {
+  const loaderData = useLoaderData();
   const actionData = useActionData();
   const navigation = useNavigation();
   const navigate = useNavigate();
@@ -126,7 +139,7 @@ const MoodyLogin = () => {
           navigate('/home/profile-update', { replace: true });
         }
         else {
-          navigate('/home', { replace: true });
+          navigate(loaderData.redirectTo, { replace: true });
         }
       }, 1000);
     }
@@ -196,6 +209,11 @@ const MoodyLogin = () => {
           </div>
         </Form>
       </div>
+      {loaderData?.message && (
+        <span className='alert alert-danger mt-3' role='alert'>
+          {loaderData.message}
+        </span>
+      )}
       {actionData?.error && (
         <span className='alert alert-danger mt-3' role='alert'>
           {actionData.error}
