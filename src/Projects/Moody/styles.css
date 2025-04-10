@@ -12,15 +12,23 @@
 
 .moody-main-container {
     width: 100wh;
-    height: 100vh;
+    height: max-content;
     background-color: #fff6e8;
+    overflow-y: auto;
 }
 
 .fixing-top {
     position: fixed;
     top: 0;
-    background-color: #ffe6be;
+    background-color: #ffe6be94;
     backdrop-filter: blur(5px) !important;
+    z-index: 1 !important;
+}
+
+@media screen and (max-width: 590px) {
+    #nav-bar-username {
+        display: none;
+    }
 }
 
 .moody-login-title, h1 {
@@ -51,7 +59,7 @@
     width: 100%;
     background-color: #FFDE00 !important;
     box-shadow: 0px 5px 0px 0px rgb(0, 0, 0);
-    position: relative;
+    /* position: relative; */
     
     &:hover {
         top: 5px;
@@ -76,6 +84,10 @@
     }
 }
 
+.nav-active {
+    border: 1px solid black !important;
+}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -91,22 +103,38 @@ input[type=number]::-webkit-outer-spin-button {
     position: relative;
 }
 
+.post-confirmation-modal .ant-btn-primary {
+    background-color: #FFDE00 !important;
+    box-shadow: 0px 2px 0px 0px rgb(0, 0, 0);
+    position: relative;
+    color: black !important;
+    border: 2px solid black !important;
+    
+    &:hover {
+        top: 2px;
+        box-shadow: none;
+        transition: ease-in-out 0.1s smooth;
+    }
+}
+
 .delete-confirmation-modal .ant-btn-primary:hover {
     background-color: rgb(255, 66, 32) !important;
     box-shadow: none !important;
     transition: ease-in-out 0.1s smooth;
 }
 
-.delete-confirmation-modal .ant-btn-default {
+.ant-btn-default {
     border: 2px solid black !important;
+    background-color: #ffe6be !important;
 }
 
-.delete-confirmation-modal .ant-btn-default:hover {
+.ant-btn-default:hover {
     background-color: black !important;
     color: white !important;
 }
 
-.delete-confirmation-modal .ant-modal-content {
+.delete-confirmation-modal .ant-modal-content,
+.post-confirmation-modal .ant-modal-content {
     background-color: #ffe6be;
     border: 3px solid black;
 }
@@ -115,6 +143,56 @@ input[type=number]::-webkit-outer-spin-button {
     backdrop-filter: blur(5px) !important;
 }
 
+.mood-icon {
+    width: 45px;
+    height: 45px;
+}
+
+.mood-text {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.mood-reaction-btn {
+    transition: all 0.2s ease-in-out;
+    border: none !important;
+
+    &:hover {
+        transform: scale(1.15);
+        transition: all 0.2s ease-in-out;
+    }
+
+    &:focus {
+        transform: scale(1.15);
+        transition: all 0.2s ease-in-out;
+    }
+}
+
+.mood-reaction-btn-disabled {
+    opacity: 0.5;
+}
+
 .moody-filter-btn {
+    height: 40px;
     width: 89px;
+    font-size: smaller !important;
+}
+
+.moody-postlist-section {
+    max-height: 650px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    /* padding-top: 10px; */
+    z-index: 0 !important;
+    /* padding-top: 400px !important; */
+}
+
+.moody-postlist-section::-webkit-scrollbar {
+    display: none;
+}
+
+.moody-post-card {
+    background-color: #ffe6be !important;
 }

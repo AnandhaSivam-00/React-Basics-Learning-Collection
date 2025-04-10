@@ -25,13 +25,19 @@ const FlexNavBar = (props) => {
     <nav className='d-inline-flex justify-content-center align-items-center gap-3 p-0 moody-nav-container'>
         <NavLink 
             to='.' 
-            className='text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+            className={({ isActive }) =>
+                isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover nav-active' : 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+            } 
+            end
         >
             Home
         </NavLink>
         <NavLink 
             to='about' 
-            className='text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+            className={({ isActive }) =>
+                isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover nav-active' : 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+            }
+            end
         >
             About
         </NavLink>
@@ -45,15 +51,24 @@ const FlexNavBar = (props) => {
             ) : (
                 <NavLink 
                     to='/login' 
-                    className='text-decoration-none text-black p-2 px-2 rounded nav-btn-hover'
+                    className={({ isActive }) =>
+                        isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover nav-active' : 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+                    }
+                    end
                 >
                     Login
                 </NavLink>
             )
         }
-        <div className='d-flex justify-content-center align-items-center mx-1 p-1 px-3 rounded nav-btn-hover'>
-            <NavLink to='profile-update' className='text-decoration-none text-black'>
-            <span className='text-secondary me-2'>{props.username}</span>
+        <div className='d-flex justify-content-center align-items-center'>
+            <NavLink 
+                to='profile-update' 
+                className={({ isActive }) =>
+                    isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover nav-active' : 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
+                }
+                end
+            >
+            <span className='text-secondary me-2' id='nav-bar-username'>{props.username}</span>
             {pictureURL ? (
                     <Avatar 
                         size={40} 

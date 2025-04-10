@@ -20,7 +20,12 @@ import {
     doc,
     updateDoc,
     getDoc,
-    deleteDoc
+    getDocs,
+    deleteDoc,
+    serverTimestamp,
+    query,
+    where,
+    orderBy,
 } from 'firebase/firestore/lite';
 
 export const getUserData = async (id) => {
@@ -200,5 +205,59 @@ export const updateUserProfileData = async ({ name, phoneNumber, photoURL, photo
             message: 'User profile update failed. Please try again!',
             error: error.message
         }
+    }
+}
+
+export const addNewPostData = async ({ mood, post }) => {
+    const user = auth.currentUser;
+
+    try {
+        const collectionRef = collection(db, 'Moody', 'moody-users-data', 'Post Data');
+
+        await addDoc(collectionRef, {
+            user_id: user.uid,
+            user_mood: mood,
+            body: post,
+            created_at: serverTimestamp(),
+        })
+
+        return {
+            success: true,
+            message: 'New post data added successfully!',
+        }
+    }
+    catch(error) {
+        console.error('Error adding new post data:', error);
+        return {
+            success: false,
+            message: 'Failed to add new post data. Please try again!',
+            error: error.message
+        }
+    }
+
+}
+
+export const getUserPosts = async (id) => {
+    try {
+        const collectionRef = collection(db, 'Moody', 'moody-users-data', 'Post Data');
+        const postsQuery = query(collectionRef, where('user_id', '==', id), orderBy('created_at', 'desc'));
+
+        const postsSnapshot = await getDocs(postsQuery);
+
+        if(postsSnapshot.empty) {
+            console.log('No posts found for this user!');
+            return null;
+        }
+
+        const posts = postsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }))
+
+        return posts;
+    }
+    catch(error) {
+        console.error('Error fetching user posts:', error);
+        return null;
     }
 }

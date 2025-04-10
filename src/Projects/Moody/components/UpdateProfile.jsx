@@ -192,8 +192,10 @@ const UpdateProfile = () => {
     };
 
     return (
-        <section className='m-2 p-2'>
-            <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+        <section 
+            className='m-2 p-2 moody-login-container'
+        >
+            <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto'  }}>
                 <h2 className='text-center'>Update Profile</h2>
                 <Suspense fallback={<p className="text-center my-5">Loading...</p>}>
                     <Await resolve={data}>
