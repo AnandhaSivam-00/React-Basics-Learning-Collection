@@ -5,7 +5,8 @@ import {
     useLoaderData,
     useOutletContext,
     Await,
-    useActionData
+    useActionData,
+    useNavigation
 } from 'react-router-dom'
 import { Modal, message } from 'antd'
 
@@ -18,6 +19,7 @@ import {
 import '../styles.css'
 import { auth } from '../../../config/firebaseConfig'
 import { requireFirebaseAuth } from '../requireFirebaseAuth'
+import DragAndDropImage from '../components/DragAndDropImage'
 
 export const moodyUpdateProfileLoader = async ({ request }) => {
     await requireFirebaseAuth(request);
@@ -71,6 +73,10 @@ export const moodyUpdateProfileAction = async ({ request }) => {
 
 const UpdateProfile = () => {
     const { userData, setUserData } = useOutletContext();
+    const navigation = useNavigation();
+
+    const [isUploading, setIsUploading] = useState(false);
+
     const [avatarURL, setAvatarURL] = useState({
         photo_url: "",
         public_id: ""
@@ -87,12 +93,12 @@ const UpdateProfile = () => {
             });
         }
         
-        if(data) {
-            setUserData(prevData => ({
-                ...prevData,
-                data
-            }));
-        }
+        // if(data) {
+        //     setUserData(prevData => ({
+        //         ...prevData,
+        //         data
+        //     }));
+        // }
     }, [userData?.photoURL, userData?.displayName, data?.phone_number, setUserData]);
     
     useEffect(() => {
@@ -100,12 +106,12 @@ const UpdateProfile = () => {
             setUserData(prevData => ({
                 ...prevData,
                 displayName: actionData.updatedData.name,
+                photoURL: actionData.updatedData.photoURL,
                 data: {
                     ...prevData.data,
                     phone_number: actionData.updatedData.phoneNumber,
-                    photo_public_id: actionData.updatedData.photoPublicID || prevData.data.photo_public_id
+                    photo_public_id: actionData.updatedData.photoPublicID || prevData.data?.photo_public_id
                 },
-                photoURL: actionData.updatedData.photoURL
             }));
         }
     }, [actionData, setUserData]);
@@ -149,6 +155,8 @@ const UpdateProfile = () => {
     }
 
     const handleImageUpload = async (file) => {
+        setIsUploading(true);
+
         if (!file) return;
 
         const timestamp = Math.round(new Date().getTime() / 1000);
@@ -192,13 +200,16 @@ const UpdateProfile = () => {
             message.error('Failed to upload avatar. Please try again.');
             return null;
         }
+        finally {
+            setIsUploading(false);
+        }
     };
 
     return (
         <section 
             className='m-2 p-2 moody-login-container'
         >
-            <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto'  }}>
+            <div style={{ width: '400px', margin: '0 auto'  }}>
                 <h2 className='text-center'>Update Profile</h2>
                 <Suspense fallback={
                   <div className='text-center text-secondary my-5'>
@@ -206,7 +217,7 @@ const UpdateProfile = () => {
                   </div>
                 }>
                     <Await resolve={data}>
-                        {({ data }) => {
+                        {(data) => {
                             return (
                                 <Form
                                     method='post'
@@ -233,36 +244,47 @@ const UpdateProfile = () => {
                                     <input
                                         type='number'
                                         name='phone_number'
-                                        defaultValue={userData?.data?.phone_number || ''}
+                                        defaultValue={data?.phone_number || ''}
                                         placeholder='Phone Number (required)'
                                         id='phone_number'
                                         className='form-control box-border'
                                         required
                                     />
-                                    <input
+                                    {/* <input
                                         type='file'
                                         placeholder='Photo URL'
                                         className='form-control form-control-lg box-border text-sm'
                                         onChange={(e) => handleImageUpload(e.target.files[0])}
-                                    />
+                                    /> */}
+                                    <div className=''>
+                                        <DragAndDropImage 
+                                            handleImageUpload={handleImageUpload} 
+                                            avatarUrl={avatarURL.photo_url}
+                                            uploadStatus={isUploading} 
+                                            setAvatarURL={setAvatarURL}
+                                        />
+                                    </div>
                                     <input
                                         type='hidden'
                                         name='photoURL'
                                         id='photoURL'
                                         defaultValue={avatarURL?.photo_url}
+                                        readOnly={true}
                                     />
                                     <input
                                         type='hidden'
                                         name='photoPublicID'
                                         id='photoPublicID'
                                         defaultValue={avatarURL?.public_id}
+                                        readOnly={true}
                                     />
                                     <div className='d-flex justify-content-center align-items-center mt-3'>
                                         <button
                                             type='submit'
                                             className='btn moody-primary-btn box-border mt-3'
+                                            disabled={navigation.state === 'submitting'}
                                         >
-                                            Update Profile
+                                            {navigation.state === 'submitting' ? 'Updating...' : 'Update Profile'}
                                         </button>
                                     </div>
                                     <div className='d-flex justify-content-center align-items-center mt-3'>
@@ -270,6 +292,7 @@ const UpdateProfile = () => {
                                             type='button'
                                             className='btn moody-secondary-btn box-border rounded w-100'
                                             onClick={handleDeleteUser}
+                                            disabled={navigation.state === 'submitting'}
                                         >
                                             Delete Account
                                         </button>

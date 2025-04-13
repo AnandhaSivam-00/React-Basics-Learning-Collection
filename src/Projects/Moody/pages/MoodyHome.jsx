@@ -14,7 +14,7 @@ import {
 } from 'react-router-dom'
 import { message, Modal } from 'antd';
 
-import MoodyPostCard from './MoodyPostCard';
+import MoodyPostCard from '../components/MoodyPostCard';
 
 import MoodAwful from '../assets/mood-1.png';
 import MoodBad from '../assets/mood-2.png';

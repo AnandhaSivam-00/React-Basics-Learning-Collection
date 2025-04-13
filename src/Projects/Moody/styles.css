@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
+@import 'tailwindcss';
 
 .moody-login-container {
     width: 100wh;
@@ -37,7 +38,7 @@
 .moody-login-title, h1 {
     font-size: 40px;
     font-weight: 400;
-    font-family: 'Calistoga', sans-serif;;
+    font-family: 'Calistoga', sans-serif;
 }
 
 .google-login-btn {
@@ -45,6 +46,9 @@
     height: 60px;
     background-color: white !important;
     box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.25) !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
     
     &:hover {
         background-color: white !important;

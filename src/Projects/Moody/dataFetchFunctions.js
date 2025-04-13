@@ -173,6 +173,34 @@ export const deleteUserAccountParmanent = async (id, photo_public_id) => {
     }
 }
 
+export const deleteAvatar = async (id) => {
+    try {
+        const userRef = doc(db, 'Moody', 'moody-users-data', 'Users', id);
+
+        await updateProfile(auth.currentUser, {
+            photoURL: ""
+        });
+
+        await updateDoc(userRef, {
+            photo_public_id: "",
+        })
+
+        console.log('Avatar deleted successfully!');
+        return {
+            success: true,
+            message: 'Avatar deleted successfully!'
+        }
+    }
+    catch(error) {
+        console.error('Error deleting avatar:', error);
+        return {
+            success: false,
+            message: 'Failed to delete avatar. Please try again!',
+            error: error.message
+        }
+    }
+}
+
 export const updateUserProfileData = async ({ name, phoneNumber, photoURL, photoPublicID }) => {
     try {
         const user = auth.currentUser;

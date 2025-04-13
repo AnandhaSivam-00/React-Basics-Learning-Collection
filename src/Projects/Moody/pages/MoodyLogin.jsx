@@ -9,16 +9,16 @@ import {
 } from 'react-router-dom'
 import { Server } from 'miragejs'
 
-import { GoogleIcon } from './assets/Icons'
-import { auth } from '../../config/firebaseConfig'
+import { GoogleIcon } from '../assets/Icons'
+import { auth } from '../../../config/firebaseConfig'
 import {
   loginAuthProvider,
   createNewUserProvider,
   isUserloggedIn,
   handleGoogleLogin,
-} from './dataFetchFunctions'
+} from '../dataFetchFunctions'
 
-import './styles.css'
+import '../styles.css'
 
 export const moodyLoginLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -165,8 +165,7 @@ const MoodyLogin = () => {
               value='googleLogin'
               disabled={navigation.state === 'submitting'}
             >
-              <GoogleIcon width={60} height={35} />
-              Sign in with Google
+              <GoogleIcon width={60} height={35} /> Sign in with Google
             </button>
           </div>
           <input

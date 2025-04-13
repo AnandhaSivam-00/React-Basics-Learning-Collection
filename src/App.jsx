@@ -37,14 +37,20 @@ import {
     HostVanPhoto, 
     HostVanPricing 
 } from './React Router Projects/VanLife/components/Host/HostVansDetails.jsx'
+import MoodyLogin, { moodyBasicAction, moodyLoginLoader } from './Projects/Moody/pages/MoodyLogin.jsx'
+import Moody from './Projects/Moody/Moody.jsx'
+import UpdateProfile, { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
 
 import { requireAuth } from './React Router Projects/VanLife/server/utils.js'
+import AboutPage from './Projects/Moody/pages/AboutPage.jsx';
+import MoodyHome, { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHome.jsx';
+import { requireFirebaseAuth } from './Projects/Moody/requireFirebaseAuth.js';
 
 // For creating the Loaders, we use this method to create a Router
 // and then we pass the router to the RouterProvider
 const router = createBrowserRouter(createRoutesFromElements(
   <>
-    <Route path="/" element={<HappyDays />} />
+    {/* <Route path="/" element={<HappyDays />} />
     <Route path="/chief-mistral" element={<ChiefMistral />} />
     <Route path="/reactfacts" element={<ReactFacts />} />
     <Route path="/travel-journal" element={<TravelJournal />} />
@@ -127,6 +133,40 @@ const router = createBrowserRouter(createRoutesFromElements(
             </Route>
         </Route>
         <Route path='*' element={<h1>404 - Not Found</h1>} />
+    </Route> */}
+    <Route 
+        path='/login' 
+        element={<MoodyLogin />} 
+        loader={moodyLoginLoader}
+        action={moodyBasicAction}
+        errorElement={<Errors />}
+    />
+    <Route
+        path='/home'
+        element={<Moody />}
+        loader={async ({ request }) => await requireFirebaseAuth(request)}
+        errorElement={<Errors />}
+    >
+        <Route
+            index
+            element={<MoodyHome />}
+            loader={moodyPostLoader}
+            action={moodyPostAction}
+            errorElement={<Errors />}
+        />
+        <Route
+            path='profile-update'
+            element={<UpdateProfile />}
+            errorElement={<Errors />}
+            loader={moodyUpdateProfileLoader}
+            action={moodyUpdateProfileAction}
+        />
+        <Route
+            path='about'
+            element={<AboutPage />}
+            loader={async ({ request }) => await requireFirebaseAuth(request)}
+            errorElement={<Errors />}
+        />
     </Route>
   </>
 ))
