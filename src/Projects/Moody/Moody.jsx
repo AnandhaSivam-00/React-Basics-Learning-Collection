@@ -23,15 +23,14 @@ const Moody = () => {
   }, []);
 
   return (
-    <div className='d-flex flex-column justify-content-center align-items-center gap-3 moody-main-container'>
-       <div className='mt-3 p-2 rounded fixing-top shadow'>
+    <div className='d-flex flex-column justify-content-center align-items-center gap-3 moody-main-container '>
         <FlexNavBar 
           token={userData?.accessToken}
           username={userData?.displayName || userData?.email}
           photoURL={userData?.photoURL} 
           setUserData={setUserData}
         />
-       </div>
+       {/* <p className='absolute'>Gggggggg</p> */}
        <Outlet context={{ userData, setUserData }} />
     </div>
   )
