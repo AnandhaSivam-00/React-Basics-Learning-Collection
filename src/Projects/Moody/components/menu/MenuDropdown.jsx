@@ -13,8 +13,6 @@ const MenuDropdown = ({ children }) => {
                 className='absolute nav-background-color top-22 right-5 shadow rounded p-2' 
                 role='menu'
                 aria-label='menu dropdown list'
-                aria-haspopup={!isOpen}
-                aria-hidden={isOpen}
             >
                 { children }
             </div>

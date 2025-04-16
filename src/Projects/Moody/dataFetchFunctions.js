@@ -244,6 +244,7 @@ export const addNewPostData = async ({ mood, post }) => {
 
         await addDoc(collectionRef, {
             user_id: user.uid,
+            user_name: user.displayName,
             user_mood: mood,
             body: post,
             created_at: serverTimestamp(),
@@ -288,6 +289,31 @@ export const getUserPosts = async (id) => {
     }
     catch(error) {
         console.error('Error fetching user posts:', error);
+        return null;
+    }
+}
+
+export const getAllUserPostData = async () => {
+    try {
+        const collectionRef = collection(db, 'Moody', 'moody-users-data', 'Post Data');
+        const postsQuery = query(collectionRef, orderBy('created_at', 'desc'));
+
+        const postsSnapshot = await getDocs(postsQuery);
+
+        if(postsSnapshot.empty) {
+            console.log('No posts found!');
+            return null;
+        }
+
+        const posts = postsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+
+        return posts;
+    }
+    catch(error) {
+        console.error('Error fetching all user post data:', error);
         return null;
     }
 }

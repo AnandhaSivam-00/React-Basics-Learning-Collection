@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import Awful from '../assets/mood-1.png';
 import Bad from '../assets/mood-2.png';
@@ -11,7 +11,7 @@ import '../styles.css'
 const MoodyPostCard = ({userName = null, ...props}) => {
 
   // Format Firestore timestamp to date string
-  const formatDate = (timestamp) => {
+  const formatDate = useCallback((timestamp) => {
     if (!timestamp) return "N/A";
 
     try {
@@ -29,10 +29,10 @@ const MoodyPostCard = ({userName = null, ...props}) => {
       console.error("Error formatting date:", error);
       return "Invalid date";
     }
-  };
+  }, []);
 
   // Format Firestore timestamp to time string
-  const formatTime = (timestamp) => {
+  const formatTime = useCallback((timestamp) => {
     if (!timestamp) return "N/A";
 
     try {
@@ -52,7 +52,15 @@ const MoodyPostCard = ({userName = null, ...props}) => {
       console.error("Error formatting time:", error);
       return "Invalid time";
     }
-  };
+  }, []);
+
+  const postContent = useMemo(() => {
+    if(props.post && props.post.includes('<br />')) {
+      return <p dangerouslySetInnerHTML={{__html: props.post}}></p>;
+    }
+
+    return <p>{props.post}</p>;
+  }, [props.post]);
 
 
   return (
@@ -80,13 +88,15 @@ const MoodyPostCard = ({userName = null, ...props}) => {
         </div>
       </div>
       <div className='card-body p-0 mb-0'>
-        <p>{props.post}</p>
+        {postContent}
       </div>
-      <div className='card-footer'>
-        <span>{userName}</span>
-      </div>
+      {userName ? (
+        <div className='text-right'>
+          <span className='text-xs text-secondary'>{userName}</span>
+        </div>
+      ) : (null)}
     </div>
   )
 }
 
-export default MoodyPostCard
+export default React.memo(MoodyPostCard);

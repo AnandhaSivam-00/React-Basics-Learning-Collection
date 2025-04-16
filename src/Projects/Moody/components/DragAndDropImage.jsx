@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Avatar, Button, Tooltip } from 'antd'
 
 import { AvatarDefaultIcon } from '../../../assets/Icons'
@@ -8,22 +8,22 @@ import { auth } from '../../../config/firebaseConfig'
 const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvatarURL }) => {
     const [isDragging, setIsDragging] = useState(false);
 
-    const handleDragOver = (e) => {
+    const handleDragOver = useCallback((e) => {
         e.preventDefault();
         setIsDragging(true);
-    };
+    }, [setIsDragging]);
 
-    const handleDragLeave = () => {
+    const handleDragLeave = useCallback(() => {
         setIsDragging(false);
-    };
+    }, [setIsDragging]);
 
-    const handleDrop = (e) => {
+    const handleDrop = useCallback((e) => {
         e.preventDefault();
         handleImageUpload(e.dataTransfer.files[0]);
         setIsDragging(false);
-    };
+    }, [handleImageUpload, setIsDragging]);
 
-    const handleDeleteAvatar = async () => {
+    const handleDeleteAvatar = useCallback(async () => {
         try {
             // await deleteAvatar(auth.currentUser.uid); 
             setAvatarURL({
@@ -36,7 +36,7 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
             console.error('Error deleting avatar:', error);
             return;
         }
-    }
+    }, [setAvatarURL]);
 
     return (
         <div className='w-[400px] h-[60px] rounded-sm flex flex-row justify-between items-center'>
@@ -98,4 +98,4 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
     )
 }
 
-export default DragAndDropImage
+export default React.memo(DragAndDropImage);

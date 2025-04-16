@@ -77,14 +77,6 @@ const FlexNavBar = (props) => {
                                         alt='Profile Picture'
                                     />
                                 ) : (<Avatar size={40} icon={<AvatarDefaultIcon width={28} height={25} />} />)}
-                                {/* <NavLink 
-                        to='profile-update' 
-                        className={({ isActive }) =>
-                            isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover nav-active' : 'text-decoration-none text-black p-2 px-3 rounded nav-btn-hover'
-                        }
-                        end
-                        >
-                        </NavLink> */}
                             </div>
                         </Menu.Button>
                     </nav>

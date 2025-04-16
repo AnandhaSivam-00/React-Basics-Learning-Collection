@@ -1,4 +1,4 @@
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { 
     Route, 
     createBrowserRouter, 
@@ -65,6 +65,7 @@ import { hostVanDetailLoader } from './React Router Projects/VanLife/components/
 import { moodyBasicAction, moodyLoginLoader } from './Projects/Moody/pages/MoodyLogin.jsx'
 import { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHome.jsx';
 import { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
+import { moodyFeedsLoader } from './Projects/Moody/pages/Feeds.jsx';
 
 
 
@@ -179,8 +180,7 @@ const router = createBrowserRouter(createRoutesFromElements(
         <Route
             path='post-feeds'
             element={<Feeds />}
-            // loader={}
-            // action={}
+            loader={moodyFeedsLoader}
             errorElement={<Errors />}
         />
         <Route
@@ -202,7 +202,9 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 const App = () => {
     return (
-      <RouterProvider router={router} />
+        <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
+            <RouterProvider router={router} />
+        </Suspense>
     )
 }
 

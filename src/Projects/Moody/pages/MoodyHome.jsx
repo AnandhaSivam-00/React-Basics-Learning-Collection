@@ -3,7 +3,9 @@ import React, {
   useState,
   useEffect,
   Suspense,
-  useCallback
+  useCallback,
+  useMemo,
+  memo
 } from 'react'
 import {
   useFetcher,
@@ -43,7 +45,7 @@ export const moodyPostAction = async ({ request }) => {
   const mood = postData.get('mood');
   const post = postData.get('post');
 
-  console.log(mood, post);
+  // console.log(mood, post);
 
   if (!mood || !post) {
     return {
@@ -111,11 +113,11 @@ const MoodyHome = () => {
     }
   }, [actionData]);
 
-  const handleMoodClick = (moodName) => {
+  const handleMoodClick = useCallback((moodName) => {
     setCurrentMood(moodName);
-  }
+  }, [setCurrentMood])
 
-  const handleMoodPost = (e) => {
+  const handleMoodPost = useCallback((e) => {
     e.preventDefault();
 
     const postBody = document.getElementById('post').value.replace(/\n/g, '<br />');
@@ -143,7 +145,7 @@ const MoodyHome = () => {
         setCurrentMood('');
       }
     })
-  }
+  }, [currentMood, fetcher]);
 
   // Function to filter posts based on date
   const filterPostsByDate = useCallback((posts, filterType) => {
@@ -182,7 +184,7 @@ const MoodyHome = () => {
     }
   }, []);
 
-  const renderPosts = (postData) => {
+  const renderPosts = useCallback((postData) => {
     useEffect(() => {
       const filteredPosts = filterPostsByDate(postData, filter);
       setFilteredPosts(filteredPosts);
@@ -199,7 +201,7 @@ const MoodyHome = () => {
 
         return prevSearch;
       })
-    }
+    };
 
     const filteredPostsDetails = filteredPosts.map((items) => (
       <MoodyPostCard
@@ -253,7 +255,7 @@ const MoodyHome = () => {
         </div>
       </>
     )
-  }
+  }, [filterPostsByDate, filteredPosts, filter, setSearchParams]);
 
   return (
     <section
@@ -359,7 +361,7 @@ const MoodyHome = () => {
           <button
             type='submit'
             className='btn moody-primary-btn box-border mt-3'
-            disabled={navigation.state === 'submitting'}
+            disabled={navigation.state === 'submitting' || currentMood === ''}
           >
             {navigation.state === 'submitting' ? 'Posting...' : 'Post'}
           </button>
@@ -381,4 +383,4 @@ const MoodyHome = () => {
   )
 }
 
-export default MoodyHome
+export default React.memo(MoodyHome);

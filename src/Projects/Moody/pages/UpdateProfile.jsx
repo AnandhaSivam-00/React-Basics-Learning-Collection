@@ -1,4 +1,12 @@
-import React, { lazy, useEffect, useState, Suspense } from 'react'
+import React, { 
+    lazy, 
+    useEffect, 
+    useState, 
+    Suspense, 
+    useMemo,
+    useCallback,
+    memo
+} from 'react'
 import crypto from 'crypto-js'
 import {
     Form,
@@ -117,7 +125,7 @@ const UpdateProfile = () => {
         }
     }, [actionData, setUserData]);
 
-    const handleDeleteUser = async () => {
+    const handleDeleteUser = useCallback(async () => {
         Modal.confirm({
             title: 'Action confirmation needed',
             content: `Are you sure you want to delete the 
@@ -153,9 +161,9 @@ const UpdateProfile = () => {
                 }
             }
         })
-    }
+    }, [userData, setUserData]);
 
-    const handleImageUpload = async (file) => {
+    const handleImageUpload = useCallback(async (file) => {
         setIsUploading(true);
 
         if (!file) return;
@@ -204,14 +212,14 @@ const UpdateProfile = () => {
         finally {
             setIsUploading(false);
         }
-    };
+    }, []);
 
     return (
         <section 
             className='m-2 p-2 moody-login-container'
         >
             <div style={{ width: '400px', margin: '0 auto'  }}>
-                <h2 className='text-center'>Update Profile</h2>
+                <h1 className='text-center'>Update Profile</h1>
                 <Suspense fallback={
                   <div className='text-center text-secondary my-5'>
                     <span className='moody-loading-text-style'>Loading my Mood...</span>
@@ -308,4 +316,4 @@ const UpdateProfile = () => {
     )
 }
 
-export default UpdateProfile
+export default React.memo(UpdateProfile);

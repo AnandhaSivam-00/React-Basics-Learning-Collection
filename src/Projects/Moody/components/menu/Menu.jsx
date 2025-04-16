@@ -24,6 +24,6 @@ const Menu = ({ children }) => {
   )
 }
 
-export default Menu;
+export default React.memo(Menu);
 export { MenuContext };
 
