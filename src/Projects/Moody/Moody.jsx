@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Outlet, useNavigate, useLoaderData } from 'react-router-dom'
-import FlexNavBar from './components/FlexNavBar'
+import React, { lazy, useState, useEffect } from 'react'
+import { Outlet } from 'react-router-dom'
 
+const FlexNavBar = lazy(() => import('./components/FlexNavBar'))
 import { auth } from '../../config/firebaseConfig'
 
 import './styles.css'
@@ -9,7 +9,7 @@ import './styles.css'
 const Moody = () => {
   const [userData, setUserData] = useState(null);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const data = auth.currentUser;

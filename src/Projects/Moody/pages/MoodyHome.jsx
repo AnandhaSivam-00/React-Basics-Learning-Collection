@@ -1,4 +1,5 @@
 import React, {
+  lazy,
   useState,
   useEffect,
   Suspense,
@@ -14,7 +15,7 @@ import {
 } from 'react-router-dom'
 import { message, Modal } from 'antd';
 
-import MoodyPostCard from '../components/MoodyPostCard';
+const MoodyPostCard = lazy(() => import('../components/MoodyPostCard'))
 
 import MoodAwful from '../assets/mood-1.png';
 import MoodBad from '../assets/mood-2.png';
@@ -276,6 +277,7 @@ const MoodyHome = () => {
               src={MoodAwful}
               alt='Mood Sad'
               className='mood-icon'
+              loading='lazy'
             />
             <span className='mood-text'>Awful</span>
           </button>
@@ -288,6 +290,7 @@ const MoodyHome = () => {
               src={MoodBad}
               alt='Mood Bad'
               className='mood-icon'
+              loading='lazy'
             />
             <span className='mood-text'>Bad</span>
           </button>
@@ -300,6 +303,7 @@ const MoodyHome = () => {
               src={MoodMeh}
               alt='Mood Meh'
               className='mood-icon'
+              loading='lazy'
             />
             <span className='mood-text'>Meh</span>
           </button>
@@ -312,6 +316,7 @@ const MoodyHome = () => {
               src={MoodGood}
               alt='Mood Good'
               className='mood-icon'
+              loading='lazy'
             />
             <span className='mood-text'>Good</span>
           </button>
@@ -324,6 +329,7 @@ const MoodyHome = () => {
               src={MoodAmazing}
               alt='Mood Amazing'
               className='mood-icon'
+              loading='lazy'
             />
             <span className='mood-text'>Amazing</span>
           </button>

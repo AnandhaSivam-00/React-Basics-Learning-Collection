@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense } from 'react'
+import React, { lazy, useEffect, useState, Suspense } from 'react'
 import crypto from 'crypto-js'
 import {
     Form,
@@ -19,7 +19,8 @@ import {
 import '../styles.css'
 import { auth } from '../../../config/firebaseConfig'
 import { requireFirebaseAuth } from '../requireFirebaseAuth'
-import DragAndDropImage from '../components/DragAndDropImage'
+
+const DragAndDropImage = lazy(() => import('../components/DragAndDropImage'))
 
 export const moodyUpdateProfileLoader = async ({ request }) => {
     await requireFirebaseAuth(request);

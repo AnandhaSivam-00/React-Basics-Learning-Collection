@@ -8,7 +8,7 @@ import Amazing from '../assets/mood-5.png';
 
 import '../styles.css'
 
-const MoodyPostCard = (props) => {
+const MoodyPostCard = ({userName = null, ...props}) => {
 
   // Format Firestore timestamp to date string
   const formatDate = (timestamp) => {
@@ -75,11 +75,15 @@ const MoodyPostCard = (props) => {
             alt={`Mood ${props.mood}`}
             width={30}
             height={30}
+            loading='lazy'
           />
         </div>
       </div>
       <div className='card-body p-0 mb-0'>
         <p>{props.post}</p>
+      </div>
+      <div className='card-footer'>
+        <span>{userName}</span>
       </div>
     </div>
   )

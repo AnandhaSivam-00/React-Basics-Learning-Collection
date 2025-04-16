@@ -1,50 +1,72 @@
-import React from 'react'
+import React, { lazy } from 'react'
 import { 
     Route, 
     createBrowserRouter, 
     createRoutesFromElements,
     RouterProvider, 
 } from 'react-router-dom'
-import Wallet from './SampleReducer/Wallet';
-import HappyDays from './components/HappyDays';
 
-import Undrilling from '../src/MealsListView/Undrilling'
-import ReactFacts from './Projects/React Facts/ReactFacts';
-import TravelJournal from './Projects/Travel Journal/TravelJournal';
-import ChiefMistral from './Projects/Chief Mistral/ChiefMistral';
-import MemeGenerator from './Projects/Meme Generator/MemeGenerator';
 
-import MainContent from './Projects/Tenzies/MainContent';
-import MainGamePage from './Projects/Assembly EndGame/MainGamePage';
-import Home from './React Router Projects/VanLife/components/Home.jsx'
-import About from './React Router Projects/VanLife/components/About.jsx'
-import Errors from './React Router Projects/VanLife/components/Errors.jsx'
-import Login, { loginAction, loginLoader } from './React Router Projects/VanLife/components/Login.jsx'
-
-import VansList, { vansLoader } from './React Router Projects/VanLife/components/Vans/VansList.jsx'
-import VanDetails, { vanDetailsLoader } from './React Router Projects/VanLife/components/Vans/VanDetails.jsx'
-
-import MainLayout from './React Router Projects/VanLife/components/Layouts/MainLayout.jsx'
-import HostLayout from './React Router Projects/VanLife/components/Layouts/HostLayout.jsx'
-
-import Dashboard from './React Router Projects/VanLife/components/Host/Dashboard.jsx'
-import Income from './React Router Projects/VanLife/components/Host/Income.jsx'
-import Reviews from './React Router Projects/VanLife/components/Host/Reviews.jsx'
-import HostVans, { hostVansLoader } from './React Router Projects/VanLife/components/Host/HostVans.jsx'
-import HostVansDetails, { hostVanDetailLoader } from './React Router Projects/VanLife/components/Host/HostVansDetails.jsx'
-import { 
-    HostVanDetail, 
-    HostVanPhoto, 
-    HostVanPricing 
-} from './React Router Projects/VanLife/components/Host/HostVansDetails.jsx'
-import MoodyLogin, { moodyBasicAction, moodyLoginLoader } from './Projects/Moody/pages/MoodyLogin.jsx'
-import Moody from './Projects/Moody/Moody.jsx'
-import UpdateProfile, { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
-
+// Authentication Functions for Firebase and React Router
 import { requireAuth } from './React Router Projects/VanLife/server/utils.js'
-import AboutPage from './Projects/Moody/pages/AboutPage.jsx';
-import MoodyHome, { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHome.jsx';
 import { requireFirebaseAuth } from './Projects/Moody/requireFirebaseAuth.js';
+
+// Components Importing (Lazy Loading)
+const Wallet = lazy(() => import('./SampleReducer/Wallet'));
+
+const HappyDays = lazy(() => import('./components/HappyDays'));
+
+const Undrilling = lazy(() => import('../src/MealsListView/Undrilling'));
+
+const ReactFacts = lazy(() => import('./Projects/React Facts/ReactFacts'));
+
+const TravelJournal = lazy(() => import('./Projects/Travel Journal/TravelJournal'));
+
+const ChiefMistral = lazy(() => import('./Projects/Chief Mistral/ChiefMistral'));
+
+const MemeGenerator = lazy(() => import('./Projects/Meme Generator/MemeGenerator'));
+
+const MainContent = lazy(() => import('./Projects/Tenzies/MainContent'));
+
+const MainGamePage = lazy(() => import('./Projects/Assembly EndGame/MainGamePage'));
+
+const Home = lazy(() => import('./React Router Projects/VanLife/components/Home.jsx'));
+const About = lazy(() => import('./React Router Projects/VanLife/components/About.jsx'));
+const MainLayout = lazy(() => import('./React Router Projects/VanLife/components/Layouts/MainLayout.jsx'));
+const HostLayout = lazy(() => import('./React Router Projects/VanLife/components/Layouts/HostLayout.jsx'));
+const Dashboard = lazy(() => import('./React Router Projects/VanLife/components/Host/Dashboard.jsx'));
+const Income = lazy(() => import('./React Router Projects/VanLife/components/Host/Income.jsx'));
+const Reviews = lazy(() => import('./React Router Projects/VanLife/components/Host/Reviews.jsx'));
+const Errors = lazy(() => import('./React Router Projects/VanLife/components/Errors.jsx'))
+const Login = lazy(() => import('./React Router Projects/VanLife/components/Login.jsx'))
+const VansList = lazy(() => import('./React Router Projects/VanLife/components/Vans/VansList.jsx'))
+const VanDetails = lazy(() => import('./React Router Projects/VanLife/components/Vans/VanDetails.jsx'))
+const HostVans = lazy(() => import('./React Router Projects/VanLife/components/Host/HostVans.jsx'))
+const HostVansDetails = lazy(() => import('./React Router Projects/VanLife/components/Host/HostVansDetails.jsx'))
+const HostVanDetail = lazy(() => import('./React Router Projects/VanLife/components/Host/HostVansDetails.jsx'))
+const HostVanPhoto = lazy(() => import('./React Router Projects/VanLife/components/Host/HostVansDetails.jsx'))
+const HostVanPricing = lazy(() => import('./React Router Projects/VanLife/components/Host/HostVansDetails.jsx'))
+
+const AboutPage = lazy(() => import('./Projects/Moody/pages/AboutPage.jsx'))
+const MoodyHome = lazy(() => import('./Projects/Moody/pages/MoodyHome.jsx'))
+const Feeds = lazy(() => import('./Projects/Moody/pages/Feeds.jsx'))
+const UpdateProfile = lazy(() => import('./Projects/Moody/pages/UpdateProfile.jsx'))
+const Moody = lazy(() => import('./Projects/Moody/Moody.jsx'))
+const MoodyLogin = lazy(() => import('./Projects/Moody/pages/MoodyLogin.jsx'))
+
+
+// Loader and Action Importing
+import { loginAction, loginLoader } from './React Router Projects/VanLife/components/Login.jsx'
+import { vansLoader } from './React Router Projects/VanLife/components/Vans/VansList.jsx'
+import { vanDetailsLoader } from './React Router Projects/VanLife/components/Vans/VanDetails.jsx'
+import { hostVansLoader } from './React Router Projects/VanLife/components/Host/HostVans.jsx'
+import { hostVanDetailLoader } from './React Router Projects/VanLife/components/Host/HostVansDetails.jsx'
+
+import { moodyBasicAction, moodyLoginLoader } from './Projects/Moody/pages/MoodyLogin.jsx'
+import { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHome.jsx';
+import { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
+
+
 
 // For creating the Loaders, we use this method to create a Router
 // and then we pass the router to the RouterProvider
@@ -152,6 +174,13 @@ const router = createBrowserRouter(createRoutesFromElements(
             element={<MoodyHome />}
             loader={moodyPostLoader}
             action={moodyPostAction}
+            errorElement={<Errors />}
+        />
+        <Route
+            path='post-feeds'
+            element={<Feeds />}
+            // loader={}
+            // action={}
             errorElement={<Errors />}
         />
         <Route

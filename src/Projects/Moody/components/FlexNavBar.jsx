@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { lazy, useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Avatar } from 'antd'
-
-import Menu from '../components/menu/Menu'
-import MenuDropdown from '../components/menu/MenuDropdown'
-import MenuItem from '../components/menu/MenuItem'
 
 import { AvatarDefaultIcon } from '../../../assets/Icons'
 import { handleLoggedOut } from '../dataFetchFunctions'
 import '../styles.css'
-import MenuButton from './menu/MenuButton'
 
+// const Menu = lazy(() => import('../components/menu/index'))
+import Menu from '../components/menu/index'
 
 const FlexNavBar = (props) => {
     const [pictureURL, setPictureURL] = useState(null);
@@ -70,7 +67,7 @@ const FlexNavBar = (props) => {
                                 Login
                             </NavLink>
                         )}
-                        <MenuButton>
+                        <Menu.Button>
                             <div className='d-flex justify-content-center align-items-center p-2 px-3 rounded nav-btn-hover hover:cursor-pointer'>
                                 <span className='text-secondary me-2' id='nav-bar-username'>{props.username}</span>
                                 {pictureURL ? (
@@ -89,15 +86,10 @@ const FlexNavBar = (props) => {
                         >
                         </NavLink> */}
                             </div>
-                        </MenuButton>
+                        </Menu.Button>
                     </nav>
-                    <MenuDropdown>
-                        {/* {sample.map((item, index) => (
-                            <MenuItem key={index} className='hover:bg-gray-200'>
-                                {item}
-                            </MenuItem>
-                        ))} */}
-                        <MenuItem>
+                    <Menu.Dropdown>
+                        <Menu.Item>
                             <NavLink 
                                 to='profile-update' 
                                 className={({ isActive }) =>
@@ -107,18 +99,21 @@ const FlexNavBar = (props) => {
                             >
                                 Profile
                             </NavLink>
-                        </MenuItem>
+                        </Menu.Item>
                         {props.token ? (
-                            <MenuItem>
-                                <button
-                                    className='btn text-decoration-none text-black p-2 px-2 nav-btn-hover'
-                                    onClick={handleOut}
-                                >
-                                    Sign Out
-                                </button>
-                            </MenuItem>
+                            <>
+                                <hr />
+                                <Menu.Item>
+                                    <button
+                                        className='btn text-decoration-none text-black p-2 px-2 nav-btn-hover'
+                                        onClick={handleOut}
+                                    >
+                                        Sign Out
+                                    </button>
+                                </Menu.Item>
+                            </>
                          ) : ( null )}
-                    </MenuDropdown>
+                    </Menu.Dropdown>
                 </Menu>
             </div>
         </>
