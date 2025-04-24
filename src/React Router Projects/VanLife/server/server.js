@@ -19,8 +19,31 @@ createServer({
     routes() {
         this.namespace = "api"
         this.timing = 1000
+        // Adding a passthrough to allow requests to the actual API
+        // Because the actual API is not part of the Mirage server, we need to 
+        // tell Mirage to let these requests through
+        this.passthrough((request) => {
+            // Check if the request is going to Hugging Face
+            return request.url.includes("api-inference.huggingface.co") || 
+                   request.url.includes("huggingface.co") ||
+                   request.url.includes("hf.space") ||
+                   request.url.includes("firebase") || 
+                   request.url.includes("googleapis.com")
+
+        })
+        
+        this.passthrough("https://*.googleapis.com/**")
+        this.passthrough("https://*.firebaseio.com/**")
+        this.passthrough("https://identitytoolkit.googleapis.com/**")
+        this.passthrough("https://securetoken.googleapis.com/**")
+        this.passthrough("https://*.firebase.com/**")
+        this.passthrough("https://*.firebaseapp.com/**")
         this.passthrough("https://firestore.googleapis.com/**")
         this.passthrough('https://generativelanguage.googleapis.com/**');
+        this.passthrough('https://api.cloudinary.com/**');
+        
+        // Disable namespace for external API calls
+        this.urlPrefix = ""
 
         this.get("/vans", (schema, request) => {
             //return new Response(400, {}, {error: "Error fetching data"})
