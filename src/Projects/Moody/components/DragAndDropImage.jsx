@@ -65,8 +65,8 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
             <div className='mx-2'>
                 <div className='flex flex-row justify-center items-center gap-2'>
                     {uploadStatus ? (
-                        <div class="spinner-border spinner-border-sm text-warning" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                        <div className="spinner-border spinner-border-sm text-warning" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
                     ) : (
                         <Tooltip title="Delete Avatar" placement="bottom">
