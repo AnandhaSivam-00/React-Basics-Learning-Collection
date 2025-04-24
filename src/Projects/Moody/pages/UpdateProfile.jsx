@@ -29,6 +29,7 @@ import { auth } from '../../../config/firebaseConfig'
 import { requireFirebaseAuth } from '../requireFirebaseAuth'
 
 const DragAndDropImage = lazy(() => import('../components/DragAndDropImage'))
+import TextRevealAnimation from '../components/TextRevealAnimation'
 
 export const moodyUpdateProfileLoader = async ({ request }) => {
     await requireFirebaseAuth(request);
@@ -219,7 +220,9 @@ const UpdateProfile = () => {
             className='m-2 p-2 moody-login-container'
         >
             <div style={{ width: '400px', margin: '0 auto'  }}>
-                <h1 className='text-center'>Update Profile</h1>
+                <h1 className='text-center'>
+                    <TextRevealAnimation text='Update Profile' />
+                </h1>
                 <Suspense fallback={
                   <div className='text-center text-secondary my-5'>
                     <span className='moody-loading-text-style'>Loading my Mood...</span>

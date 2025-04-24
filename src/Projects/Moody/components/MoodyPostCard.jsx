@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
+import { motion } from 'framer-motion'
 
 import Awful from '../assets/mood-1.png';
 import Bad from '../assets/mood-2.png';
@@ -64,7 +65,17 @@ const MoodyPostCard = ({userName = null, ...props}) => {
 
 
   return (
-    <div className='card p-2 w-100 shadow-sm mb-2 moody-post-card'>
+    <motion.div 
+      className='card p-2 w-100 shadow-sm mb-2 moody-post-card hover:cursor-pointer'
+      initial={{ opacity: 0, y: -50 }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0,
+      }}
+      exit={{ opacity: 0, y: -50 }}
+      transition={{ duration: 0.7 }}
+      viewport={{ once: true }}
+    >
       <div className='card-title'>
         <div className='d-flex justify-content-between align-items-center'>
           <span 
@@ -92,10 +103,10 @@ const MoodyPostCard = ({userName = null, ...props}) => {
       </div>
       {userName ? (
         <div className='text-right'>
-          <span className='text-xs text-secondary'>{userName}</span>
+          <span className='text-xs text-secondary italic'>{userName}</span>
         </div>
       ) : (null)}
-    </div>
+    </motion.div>
   )
 }
 

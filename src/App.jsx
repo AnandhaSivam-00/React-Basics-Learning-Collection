@@ -5,6 +5,7 @@ import {
     createRoutesFromElements,
     RouterProvider, 
 } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion';
 
 
 // Authentication Functions for Firebase and React Router
@@ -67,7 +68,7 @@ import { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHo
 import { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
 import { moodyFeedsLoader } from './Projects/Moody/pages/Feeds.jsx';
 
-
+import PageTransition from './Projects/Moody/components/PageTransition.jsx';
 
 // For creating the Loaders, we use this method to create a Router
 // and then we pass the router to the RouterProvider
@@ -159,40 +160,64 @@ const router = createBrowserRouter(createRoutesFromElements(
     </Route> */}
     <Route 
         path='/login' 
-        element={<MoodyLogin />} 
+        element={
+            <PageTransition>
+                <MoodyLogin />
+            </PageTransition>
+        } 
         loader={moodyLoginLoader}
         action={moodyBasicAction}
         errorElement={<Errors />}
     />
     <Route
         path='/home'
-        element={<Moody />}
+        element={
+            <PageTransition>
+                <Moody />
+            </PageTransition>
+        }
         loader={async ({ request }) => await requireFirebaseAuth(request)}
         errorElement={<Errors />}
     >
         <Route
             index
-            element={<MoodyHome />}
+            element={
+                <PageTransition>
+                    <MoodyHome />
+                </PageTransition>
+            }
             loader={moodyPostLoader}
             action={moodyPostAction}
             errorElement={<Errors />}
         />
         <Route
             path='post-feeds'
-            element={<Feeds />}
+            element={
+                <PageTransition>
+                <Feeds />
+                </PageTransition>
+            }
             loader={moodyFeedsLoader}
             errorElement={<Errors />}
         />
         <Route
             path='profile-update'
-            element={<UpdateProfile />}
+            element={
+                <PageTransition>
+                    <UpdateProfile />
+                </PageTransition>
+            }
             errorElement={<Errors />}
             loader={moodyUpdateProfileLoader}
             action={moodyUpdateProfileAction}
         />
         <Route
             path='about'
-            element={<AboutPage />}
+            element={
+                <PageTransition>
+                    <AboutPage />
+                </PageTransition>
+            }
             loader={async ({ request }) => await requireFirebaseAuth(request)}
             errorElement={<Errors />}
         />
@@ -202,9 +227,11 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 const App = () => {
     return (
-        <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
-            <RouterProvider router={router} />
-        </Suspense>
+        <AnimatePresence mode='wait'>
+            <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
+                <RouterProvider router={router} />
+            </Suspense>
+        </AnimatePresence>
     )
 }
 

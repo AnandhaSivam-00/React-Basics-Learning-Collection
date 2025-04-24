@@ -31,6 +31,7 @@ import { auth } from '../../../config/firebaseConfig';
 
 import { getUserPosts } from '../dataFetchFunctions';
 import { requireFirebaseAuth } from '../requireFirebaseAuth';
+import TextRevealAnimation from '../components/TextRevealAnimation';
 
 export const moodyPostLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
@@ -203,9 +204,10 @@ const MoodyHome = () => {
       })
     };
 
-    const filteredPostsDetails = filteredPosts.map((items) => (
+    const filteredPostsDetails = filteredPosts.map((items, index) => (
       <MoodyPostCard
         key={items.id}
+        index={index}
         mood={items.user_mood}
         post={items.body}
         date={items.created_at}
@@ -262,7 +264,9 @@ const MoodyHome = () => {
       className='d-flex flex-column justify-content-center align-items-center gap-3'
       style={{ marginTop: '10rem' }}
     >
-      <h1 className='text-center'>Welcome to Moody</h1>
+      <h1 className='text-center'>
+        <TextRevealAnimation text='Welcome to Moody' />
+      </h1>
       <p className='text-center text-secondary mb-0'>Your personal mood tracker and journal.</p>
       <p className='text-center text-secondary mt-0 mb-0'>Keep track of your moods and reflect on your day.</p>
       <div

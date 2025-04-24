@@ -1,6 +1,7 @@
 import React, { lazy, useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Avatar } from 'antd'
+import { motion } from 'framer-motion'
 
 import { AvatarDefaultIcon } from '../../../assets/Icons'
 import { handleLoggedOut } from '../dataFetchFunctions'
@@ -26,7 +27,21 @@ const FlexNavBar = (props) => {
 
     return (
         <>
-            <div className='fixing-top'>
+            <motion.div 
+                className='fixing-top'
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -50 }}
+                transition={{ duration: 0.5 }}
+                whileHover={{
+                    scale: 1.03,
+                    transition: { 
+                        duration: 0.3, 
+                        ease: 'easeInOut',
+                        bounce: 0.3,
+                    },
+                }}
+            >
                 <Menu className='relative'>
                     <nav className='d-inline-flex justify-content-center align-items-center nav-background-color rounded shadow gap-3 mt-3 p-2'>
                         <NavLink
@@ -107,7 +122,7 @@ const FlexNavBar = (props) => {
                          ) : ( null )}
                     </Menu.Dropdown>
                 </Menu>
-            </div>
+            </motion.div>
         </>
     )
 }

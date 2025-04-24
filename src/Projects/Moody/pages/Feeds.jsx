@@ -7,7 +7,8 @@ import '../styles.css'
 import { requireFirebaseAuth } from '../requireFirebaseAuth';
 import { getAllUserPostData } from '../dataFetchFunctions';
 
-const MoodyPostCard = lazy(() => import('../components/MoodyPostCard'))
+const MoodyPostCard = lazy(() => import('../components/MoodyPostCard'));
+import TextRevealAnimation from '../components/TextRevealAnimation';
 
 export const moodyFeedsLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
@@ -21,9 +22,11 @@ const Feeds = () => {
   const { feedsData } = useLoaderData();
 
   return (
-    <div className='w-screen h-screen p-3'>
+    <div className='w-full h-full p-3'>
       <div className='text-center' style={{marginTop: '130px'}}>
-        <h1 className=''>Moody Feeds</h1>
+        <h1>
+          <TextRevealAnimation text='Moody Feeds' />
+        </h1>
         <p className='text-secondary'>Here you can explore the other users moody over the day 🤗</p>
       </div>
       <Divider plain ><span className='fs-3'>😍</span></Divider>
@@ -39,9 +42,10 @@ const Feeds = () => {
                   );
                 }
 
-                return resolvedFeeds.map((post) => (
+                return resolvedFeeds.map((post, index) => (
                   <div key={post.id}>
-                    <MoodyPostCard 
+                    <MoodyPostCard
+                      index={index} 
                       post={post.body} 
                       date={post.created_at} 
                       mood={post.user_mood} 

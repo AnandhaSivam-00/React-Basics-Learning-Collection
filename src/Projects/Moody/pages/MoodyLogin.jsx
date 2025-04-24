@@ -18,6 +18,8 @@ import {
   handleGoogleLogin,
 } from '../dataFetchFunctions'
 
+import TextRevealAnimation from '../components/TextRevealAnimation'
+
 import '../styles.css'
 
 export const moodyLoginLoader = async ({ request }) => {
@@ -151,7 +153,9 @@ const MoodyLogin = () => {
   return (
     <section className='moody-login-container'>
       <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
-        <h1 className='moody-login-title text-center'>Moody</h1>
+        <h1 className='moody-login-title text-center'>
+          <TextRevealAnimation text='Moody' />
+        </h1>
         <Form
           method='POST'
           className='moody-login-form mt-1'
