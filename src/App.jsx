@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from 'react'
-import { 
-    Route, 
-    createBrowserRouter, 
+import {
+    Route,
+    createBrowserRouter,
     createRoutesFromElements,
-    RouterProvider, 
+    RouterProvider,
 } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion';
 
@@ -73,140 +73,143 @@ import PageTransition from './Projects/Moody/components/PageTransition.jsx';
 // For creating the Loaders, we use this method to create a Router
 // and then we pass the router to the RouterProvider
 const router = createBrowserRouter(createRoutesFromElements(
-  <>
-    {/* <Route path="/" element={<HappyDays />} />
-    <Route path="/chief-mistral" element={<ChiefMistral />} />
-    <Route path="/reactfacts" element={<ReactFacts />} />
-    <Route path="/travel-journal" element={<TravelJournal />} />
-    <Route path='/meme-generator' element={<MemeGenerator />} />
-    <Route path='/tenzies-game' element={<MainContent />} />
-    <Route path='/assembly-endgame' element={<MainGamePage />} />
-    <Route path='/vanslife' element={<MainLayout />} >
-        <Route index element={<Home />} />
-        <Route 
-            path='login' 
-            element={<Login />} 
-            loader={loginLoader}
-            action={loginAction}
-            errorElement={<Errors />}
-        />
-        <Route path="about" element={<About />} />
-        <Route 
-            path="vans" 
-            element={<VansList />}
-            errorElement={<Errors />}
-            loader={vansLoader} 
-        />
-        <Route 
-            path='vans/:id' 
-            element={<VanDetails />} 
-            loader={vanDetailsLoader}
-            errorElement={<Errors />}
-        />
-
-        <Route 
-            path='host' 
-            element={<HostLayout />}
-            errorElement={<Errors />} 
-        >
-            <Route 
-                index 
-                element={<Dashboard />}
-                loader={async ({ request }) => await requireAuth(request)} 
+    <>
+        <Route path="/" element={<HappyDays />} />
+        <Route path="/chief-mistral" element={<ChiefMistral />} />
+        <Route path="/reactfacts" element={<ReactFacts />} />
+        <Route path="/travel-journal" element={<TravelJournal />} />
+        <Route path='/meme-generator' element={<MemeGenerator />} />
+        <Route path='/tenzies-game' element={<MainContent />} />
+        <Route path='/assembly-endgame' element={<MainGamePage />} />
+        <Route path='/vanslife' element={<MainLayout />} >
+            <Route index element={<Home />} />
+            <Route
+                path='login'
+                element={<Login />}
+                loader={loginLoader}
+                action={loginAction}
                 errorElement={<Errors />}
             />
-            <Route 
-                path="income" 
-                element={<Income />}
-                loader={async ({ request }) => await requireAuth(request)}
-                errorElement={<Errors />} 
+            <Route path="about" element={<About />} />
+            <Route
+                path="vans"
+                element={<VansList />}
+                errorElement={<Errors />}
+                loader={vansLoader}
             />
-            <Route 
-                path="vans" 
-                element={<HostVans />}
-                loader={hostVansLoader}
-                errorElement={<Errors />} 
+            <Route
+                path='vans/:id'
+                element={<VanDetails />}
+                loader={vanDetailsLoader}
+                errorElement={<Errors />}
             />
-            <Route 
-                path="reviews" 
-                element={<Reviews />}
-                loader={async ({ request }) => await requireAuth(request)}
-                errorElement={<Errors />} 
-            />
-            <Route 
-                path="vans/:id" 
-                element={<HostVansDetails />}
-                loader={hostVanDetailLoader}
-                errorElement={<Errors />} 
+
+            <Route
+                path='host'
+                element={<HostLayout />}
+                errorElement={<Errors />}
             >
-                <Route 
-                    index 
-                    element={<HostVanDetail />}
-                    loader={async ({ request }) => await requireAuth(request)} 
+                <Route
+                    index
+                    element={<Dashboard />}
+                    loader={async ({ request }) => await requireAuth(request)}
+                    errorElement={<Errors />}
                 />
-                <Route 
-                    path="pricing" 
-                    element={<HostVanPricing />}
-                    loader={async ({ request }) => await requireAuth(request)} 
+                <Route
+                    path="income"
+                    element={<Income />}
+                    loader={async ({ request }) => await requireAuth(request)}
+                    errorElement={<Errors />}
                 />
-                <Route 
-                    path='photos' 
-                    element={<HostVanPhoto />}
-                    loader={async ({ request }) => await requireAuth(request)} 
+                <Route
+                    path="vans"
+                    element={<HostVans />}
+                    loader={hostVansLoader}
+                    errorElement={<Errors />}
+                />
+                <Route
+                    path="reviews"
+                    element={<Reviews />}
+                    loader={async ({ request }) => await requireAuth(request)}
+                    errorElement={<Errors />}
+                />
+                <Route
+                    path="vans/:id"
+                    element={<HostVansDetails />}
+                    loader={hostVanDetailLoader}
+                    errorElement={<Errors />}
+                >
+                    <Route
+                        index
+                        element={<HostVanDetail />}
+                        loader={async ({ request }) => await requireAuth(request)}
+                    />
+                    <Route
+                        path="pricing"
+                        element={<HostVanPricing />}
+                        loader={async ({ request }) => await requireAuth(request)}
+                    />
+                    <Route
+                        path='photos'
+                        element={<HostVanPhoto />}
+                        loader={async ({ request }) => await requireAuth(request)}
+                    />
+                </Route>
+            </Route>
+        </Route>
+        <Route path='/moody'>
+            <Route
+                index
+                path='login'
+                element={
+                    <PageTransition>
+                        <MoodyLogin />
+                    </PageTransition>
+                }
+                loader={moodyLoginLoader}
+                action={moodyBasicAction}
+                errorElement={<Errors />}
+            />
+            <Route
+                path='home'
+                element={
+                    <PageTransition>
+                        <Moody />
+                    </PageTransition>
+                }
+                loader={async ({ request }) => await requireFirebaseAuth(request)}
+                errorElement={<Errors />}
+            >
+                <Route
+                    index
+                    element={<MoodyHome />}
+                    loader={moodyPostLoader}
+                    action={moodyPostAction}
+                    errorElement={<Errors />}
+                />
+                <Route
+                    path='post-feeds'
+                    element={<Feeds />}
+                    loader={moodyFeedsLoader}
+                    errorElement={<Errors />}
+                />
+                <Route
+                    path='profile-update'
+                    element={<UpdateProfile />}
+                    errorElement={<Errors />}
+                    loader={moodyUpdateProfileLoader}
+                    action={moodyUpdateProfileAction}
+                />
+                <Route
+                    path='about'
+                    element={<AboutPage />}
+                    loader={async ({ request }) => await requireFirebaseAuth(request)}
+                    errorElement={<Errors />}
                 />
             </Route>
         </Route>
         <Route path='*' element={<h1>404 - Not Found</h1>} />
-    </Route> */}
-    <Route 
-        path='/login' 
-        element={
-            <PageTransition>
-                <MoodyLogin />
-            </PageTransition>
-        } 
-        loader={moodyLoginLoader}
-        action={moodyBasicAction}
-        errorElement={<Errors />}
-    />
-    <Route
-        path='/home'
-        element={
-            <PageTransition>
-                <Moody />
-            </PageTransition>
-        }
-        loader={async ({ request }) => await requireFirebaseAuth(request)}
-        errorElement={<Errors />}
-    >
-        <Route
-            index
-            element={<MoodyHome />}
-            loader={moodyPostLoader}
-            action={moodyPostAction}
-            errorElement={<Errors />}
-        />
-        <Route
-            path='post-feeds'
-            element={<Feeds />}
-            loader={moodyFeedsLoader}
-            errorElement={<Errors />}
-        />
-        <Route
-            path='profile-update'
-            element={<UpdateProfile />}
-            errorElement={<Errors />}
-            loader={moodyUpdateProfileLoader}
-            action={moodyUpdateProfileAction}
-        />
-        <Route
-            path='about'
-            element={<AboutPage />}
-            loader={async ({ request }) => await requireFirebaseAuth(request)}
-            errorElement={<Errors />}
-        />
-    </Route>
-  </>
+    </>
 ))
 
 const App = () => {

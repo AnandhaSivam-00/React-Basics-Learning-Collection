@@ -29,7 +29,7 @@ export const moodyLoginLoader = async ({ request }) => {
   return {
     success: false,
     message: url.searchParams.get('message'),
-    redirectTo: url.searchParams.get('redirectTo') || '/home',
+    redirectTo: url.searchParams.get('redirectTo') || '/moody/home',
   }
 }
 
@@ -162,7 +162,7 @@ const MoodyLogin = () => {
       }, 1000);
     }
     else if (loggedIn) {
-      navigate('/home', { replace: true });
+      navigate('/moody/home', { replace: true });
     }
   }, [actionData, navigate]);
 

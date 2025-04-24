@@ -16,7 +16,7 @@ export const requireFirebaseAuth = async (request) => {
                 });
             }
             else {
-                const loginUrl = `/login?message=You must login or create an account first!&redirectTo=${browserPath}`;
+                const loginUrl = `/moody/login?message=You must login or create an account first!&redirectTo=${browserPath}`;
                 reject(redirect(loginUrl));
                 // The redirect in react-router-dom v6.4+ is done using the redirect function from @remix-run/router
                 // Create promise for the onAuthStateChanged function to resolve or reject based on the user state

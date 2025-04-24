@@ -137,11 +137,10 @@ const FlexNavBar = (props) => {
                         {props.token ? (null) : (
                             <NavTab setPosition={setPosition}>
                                 <NavLink
-                                    to='/login'
+                                    to='/moody/login'
                                     className={({ isActive }) =>
                                         isActive ? 'text-decoration-none text-black p-2 px-3 rounded nav-active' : 'text-decoration-none text-black p-2 px-3 rounded'
                                     }
-                                    end
                                 >
                                     Login
                                 </NavLink>
