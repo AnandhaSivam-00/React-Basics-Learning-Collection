@@ -32,6 +32,7 @@ import { auth } from '../../../config/firebaseConfig';
 import { getUserPosts } from '../dataFetchFunctions';
 import { requireFirebaseAuth } from '../requireFirebaseAuth';
 import TextRevealAnimation from '../components/TextRevealAnimation';
+import PageTransition from '../components/PageTransition';
 
 export const moodyPostLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
@@ -260,130 +261,132 @@ const MoodyHome = () => {
   }, [filterPostsByDate, filteredPosts, filter, setSearchParams]);
 
   return (
-    <section
-      className='d-flex flex-column justify-content-center align-items-center gap-3'
-      style={{ marginTop: '10rem' }}
-    >
-      <h1 className='text-center'>
-        <TextRevealAnimation text='Welcome to Moody' />
-      </h1>
-      <p className='text-center text-secondary mb-0'>Your personal mood tracker and journal.</p>
-      <p className='text-center text-secondary mt-0 mb-0'>Keep track of your moods and reflect on your day.</p>
-      <div
-        className='d-flex flex-column justify-content-center align-items-center p-1'
-        style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}
+    <PageTransition>
+      <section
+        className='d-flex flex-column justify-content-center align-items-center gap-3'
+        style={{ marginTop: '10rem' }}
       >
-        <div className='d-flex flex-row justify-content-center align-items-center gap-2 mb-2 moody-reaction-section'>
-          <button
-            className={`btn mood-reaction-btn ${currentMood === 'Awful' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
-            onClick={() => handleMoodClick('Awful')}
-            disabled={navigation.state === 'submitting'}
-          >
-            <img
-              src={MoodAwful}
-              alt='Mood Sad'
-              className='mood-icon'
-              loading='lazy'
-            />
-            <span className='mood-text'>Awful</span>
-          </button>
-          <button
-            className={`btn mood-reaction-btn ${currentMood === 'Bad' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
-            onClick={() => handleMoodClick('Bad')}
-            disabled={navigation.state === 'submitting'}
-          >
-            <img
-              src={MoodBad}
-              alt='Mood Bad'
-              className='mood-icon'
-              loading='lazy'
-            />
-            <span className='mood-text'>Bad</span>
-          </button>
-          <button
-            className={`btn mood-reaction-btn ${currentMood === 'Meh' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
-            onClick={() => handleMoodClick('Meh')}
-            disabled={navigation.state === 'submitting'}
-          >
-            <img
-              src={MoodMeh}
-              alt='Mood Meh'
-              className='mood-icon'
-              loading='lazy'
-            />
-            <span className='mood-text'>Meh</span>
-          </button>
-          <button
-            className={`btn mood-reaction-btn ${currentMood === 'Good' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
-            onClick={() => handleMoodClick('Good')}
-            disabled={navigation.state === 'submitting'}
-          >
-            <img
-              src={MoodGood}
-              alt='Mood Good'
-              className='mood-icon'
-              loading='lazy'
-            />
-            <span className='mood-text'>Good</span>
-          </button>
-          <button
-            className={`btn mood-reaction-btn ${currentMood === 'Amazing' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
-            onClick={() => handleMoodClick('Amazing')}
-            disabled={navigation.state === 'submitting'}
-          >
-            <img
-              src={MoodAmazing}
-              alt='Mood Amazing'
-              className='mood-icon'
-              loading='lazy'
-            />
-            <span className='mood-text'>Amazing</span>
-          </button>
-        </div>
-
-        <form
-          onSubmit={handleMoodPost}
-          id='mood-form-submit'
+        <h1 className='text-center'>
+          <TextRevealAnimation text='Welcome to Moody' />
+        </h1>
+        <p className='text-center text-secondary mb-0'>Your personal mood tracker and journal.</p>
+        <p className='text-center text-secondary mt-0 mb-0'>Keep track of your moods and reflect on your day.</p>
+        <div
+          className='d-flex flex-column justify-content-center align-items-center p-1'
+          style={{ width: '100%', maxWidth: '420px', margin: '0 auto' }}
         >
-          <input
-            type='hidden'
-            name='mood'
-            defaultValue={currentMood}
-            required
-          />
-          <textarea
-            cols={40}
-            rows={10}
-            name='post'
-            id='post'
-            className='form-control google-login-btn'
-            style={{ height: '150px', maxHeight: '270px', resize: 'none' }}
-            placeholder='Write about your day...'
-            required
+          <div className='d-flex flex-row justify-content-center align-items-center gap-2 mb-2 moody-reaction-section'>
+            <button
+              className={`btn mood-reaction-btn ${currentMood === 'Awful' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
+              onClick={() => handleMoodClick('Awful')}
+              disabled={navigation.state === 'submitting'}
+            >
+              <img
+                src={MoodAwful}
+                alt='Mood Sad'
+                className='mood-icon'
+                loading='lazy'
+              />
+              <span className='mood-text'>Awful</span>
+            </button>
+            <button
+              className={`btn mood-reaction-btn ${currentMood === 'Bad' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
+              onClick={() => handleMoodClick('Bad')}
+              disabled={navigation.state === 'submitting'}
+            >
+              <img
+                src={MoodBad}
+                alt='Mood Bad'
+                className='mood-icon'
+                loading='lazy'
+              />
+              <span className='mood-text'>Bad</span>
+            </button>
+            <button
+              className={`btn mood-reaction-btn ${currentMood === 'Meh' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
+              onClick={() => handleMoodClick('Meh')}
+              disabled={navigation.state === 'submitting'}
+            >
+              <img
+                src={MoodMeh}
+                alt='Mood Meh'
+                className='mood-icon'
+                loading='lazy'
+              />
+              <span className='mood-text'>Meh</span>
+            </button>
+            <button
+              className={`btn mood-reaction-btn ${currentMood === 'Good' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
+              onClick={() => handleMoodClick('Good')}
+              disabled={navigation.state === 'submitting'}
+            >
+              <img
+                src={MoodGood}
+                alt='Mood Good'
+                className='mood-icon'
+                loading='lazy'
+              />
+              <span className='mood-text'>Good</span>
+            </button>
+            <button
+              className={`btn mood-reaction-btn ${currentMood === 'Amazing' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
+              onClick={() => handleMoodClick('Amazing')}
+              disabled={navigation.state === 'submitting'}
+            >
+              <img
+                src={MoodAmazing}
+                alt='Mood Amazing'
+                className='mood-icon'
+                loading='lazy'
+              />
+              <span className='mood-text'>Amazing</span>
+            </button>
+          </div>
+
+          <form
+            onSubmit={handleMoodPost}
+            id='mood-form-submit'
           >
-          </textarea>
-          <button
-            type='submit'
-            className='btn moody-primary-btn box-border mt-3'
-            disabled={navigation.state === 'submitting' || currentMood === ''}
-          >
-            {navigation.state === 'submitting' ? 'Posting...' : 'Post'}
-          </button>
-        </form>
-        <div className='w-100'>
-          <Suspense fallback={
-            <div className='text-center text-secondary my-5'>
-              <span className='moody-loading-text-style'>Loading my Mood...</span>
-            </div>
-          }>
-          {/* No need for Await, the Suspense automatically unwraps the promises */}
-             <Await resolve={postData}>
-              {renderPosts}
-            </Await>
-          </Suspense>
+            <input
+              type='hidden'
+              name='mood'
+              defaultValue={currentMood}
+              required
+            />
+            <textarea
+              cols={40}
+              rows={10}
+              name='post'
+              id='post'
+              className='form-control google-login-btn'
+              style={{ height: '150px', maxHeight: '270px', resize: 'none' }}
+              placeholder='Write about your day...'
+              required
+            >
+            </textarea>
+            <button
+              type='submit'
+              className='btn moody-primary-btn box-border mt-3'
+              disabled={navigation.state === 'submitting' || currentMood === ''}
+            >
+              {navigation.state === 'submitting' ? 'Posting...' : 'Post'}
+            </button>
+          </form>
+          <div className='w-100'>
+            <Suspense fallback={
+              <div className='text-center text-secondary my-5'>
+                <span className='moody-loading-text-style'>Loading my Mood...</span>
+              </div>
+            }>
+            {/* No need for Await, the Suspense automatically unwraps the promises */}
+              <Await resolve={postData}>
+                {renderPosts}
+              </Await>
+            </Suspense>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </PageTransition>
   )
 }
 

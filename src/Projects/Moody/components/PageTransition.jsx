@@ -26,7 +26,7 @@ const PageTransition = ({ children }) => {
       variants={pageVariansts}
       initial={{
         opacity: 0,
-        y: 20
+        y: -20
       }}
       animate="pageIn"
       exit="pageOut"

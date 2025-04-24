@@ -30,6 +30,7 @@ import { requireFirebaseAuth } from '../requireFirebaseAuth'
 
 const DragAndDropImage = lazy(() => import('../components/DragAndDropImage'))
 import TextRevealAnimation from '../components/TextRevealAnimation'
+import PageTransition from '../components/PageTransition'
 
 export const moodyUpdateProfileLoader = async ({ request }) => {
     await requireFirebaseAuth(request);
@@ -216,106 +217,108 @@ const UpdateProfile = () => {
     }, []);
 
     return (
-        <section 
-            className='m-2 p-2 moody-login-container'
-        >
-            <div style={{ width: '400px', margin: '0 auto'  }}>
-                <h1 className='text-center'>
-                    <TextRevealAnimation text='Update Profile' />
-                </h1>
-                <Suspense fallback={
-                  <div className='text-center text-secondary my-5'>
-                    <span className='moody-loading-text-style'>Loading my Mood...</span>
-                  </div>
-                }>
-                    <Await resolve={data}>
-                        {(data) => {
-                            return (
-                                <Form
-                                    method='post'
-                                    className='d-flex flex-column gap-3 mt-4'
-                                >
-                                    <input
-                                        type='text'
-                                        name='name'
-                                        defaultValue={userData?.displayName || ''}
-                                        placeholder='Name (required)'
-                                        id='name'
-                                        className='form-control box-border'
-                                        required
-                                    />
-                                    <input
-                                        type='email'
-                                        name='email'
-                                        defaultValue={userData?.email || ''}
-                                        placeholder='email'
-                                        id='email'
-                                        className='form-control box-border'
-                                        disabled={true}
-                                    />
-                                    <input
-                                        type='number'
-                                        name='phone_number'
-                                        defaultValue={data?.phone_number || ''}
-                                        placeholder='Phone Number (required)'
-                                        id='phone_number'
-                                        className='form-control box-border'
-                                        required
-                                    />
-                                    {/* <input
-                                        type='file'
-                                        placeholder='Photo URL'
-                                        className='form-control form-control-lg box-border text-sm'
-                                        onChange={(e) => handleImageUpload(e.target.files[0])}
-                                    /> */}
-                                    <div className=''>
-                                        <DragAndDropImage 
-                                            handleImageUpload={handleImageUpload} 
-                                            avatarUrl={avatarURL.photo_url}
-                                            uploadStatus={isUploading} 
-                                            setAvatarURL={setAvatarURL}
+        <PageTransition>
+            <section 
+                className='m-2 p-2 moody-login-container'
+            >
+                <div style={{ width: '400px', margin: '0 auto'  }}>
+                    <h1 className='text-center'>
+                        <TextRevealAnimation text='Update Profile' />
+                    </h1>
+                    <Suspense fallback={
+                    <div className='text-center text-secondary my-5'>
+                        <span className='moody-loading-text-style'>Loading my Mood...</span>
+                    </div>
+                    }>
+                        <Await resolve={data}>
+                            {(data) => {
+                                return (
+                                    <Form
+                                        method='post'
+                                        className='d-flex flex-column gap-3 mt-4'
+                                    >
+                                        <input
+                                            type='text'
+                                            name='name'
+                                            defaultValue={userData?.displayName || ''}
+                                            placeholder='Name (required)'
+                                            id='name'
+                                            className='form-control box-border'
+                                            required
                                         />
-                                    </div>
-                                    <input
-                                        type='hidden'
-                                        name='photoURL'
-                                        id='photoURL'
-                                        defaultValue={avatarURL?.photo_url}
-                                        readOnly={true}
-                                    />
-                                    <input
-                                        type='hidden'
-                                        name='photoPublicID'
-                                        id='photoPublicID'
-                                        defaultValue={avatarURL?.public_id}
-                                        readOnly={true}
-                                    />
-                                    <div className='d-flex justify-content-center align-items-center mt-3'>
-                                        <button
-                                            type='submit'
-                                            className='btn moody-primary-btn box-border mt-3'
-                                            disabled={navigation.state === 'submitting'}
-                                        >
-                                            {navigation.state === 'submitting' ? 'Updating...' : 'Update Profile'}
-                                        </button>
-                                    </div>
-                                    <div className='d-flex justify-content-center align-items-center mt-3'>
-                                        <button
-                                            type='button'
-                                            className='btn moody-secondary-btn box-border rounded w-100'
-                                            onClick={handleDeleteUser}
-                                            disabled={navigation.state === 'submitting'}
-                                        >
-                                            Delete Account
-                                        </button>
-                                    </div>
-                                </Form>
-                            )
-                        }}
-                    </Await>
-                </Suspense>
-            </div>
-        </section>
+                                        <input
+                                            type='email'
+                                            name='email'
+                                            defaultValue={userData?.email || ''}
+                                            placeholder='email'
+                                            id='email'
+                                            className='form-control box-border'
+                                            disabled={true}
+                                        />
+                                        <input
+                                            type='number'
+                                            name='phone_number'
+                                            defaultValue={data?.phone_number || ''}
+                                            placeholder='Phone Number (required)'
+                                            id='phone_number'
+                                            className='form-control box-border'
+                                            required
+                                        />
+                                        {/* <input
+                                            type='file'
+                                            placeholder='Photo URL'
+                                            className='form-control form-control-lg box-border text-sm'
+                                            onChange={(e) => handleImageUpload(e.target.files[0])}
+                                        /> */}
+                                        <div className=''>
+                                            <DragAndDropImage 
+                                                handleImageUpload={handleImageUpload} 
+                                                avatarUrl={avatarURL.photo_url}
+                                                uploadStatus={isUploading} 
+                                                setAvatarURL={setAvatarURL}
+                                            />
+                                        </div>
+                                        <input
+                                            type='hidden'
+                                            name='photoURL'
+                                            id='photoURL'
+                                            defaultValue={avatarURL?.photo_url}
+                                            readOnly={true}
+                                        />
+                                        <input
+                                            type='hidden'
+                                            name='photoPublicID'
+                                            id='photoPublicID'
+                                            defaultValue={avatarURL?.public_id}
+                                            readOnly={true}
+                                        />
+                                        <div className='d-flex justify-content-center align-items-center mt-3'>
+                                            <button
+                                                type='submit'
+                                                className='btn moody-primary-btn box-border mt-3'
+                                                disabled={navigation.state === 'submitting'}
+                                            >
+                                                {navigation.state === 'submitting' ? 'Updating...' : 'Update Profile'}
+                                            </button>
+                                        </div>
+                                        <div className='d-flex justify-content-center align-items-center mt-3'>
+                                            <button
+                                                type='button'
+                                                className='btn moody-secondary-btn box-border rounded w-100'
+                                                onClick={handleDeleteUser}
+                                                disabled={navigation.state === 'submitting'}
+                                            >
+                                                Delete Account
+                                            </button>
+                                        </div>
+                                    </Form>
+                                )
+                            }}
+                        </Await>
+                    </Suspense>
+                </div>
+            </section>
+        </PageTransition>
     )
 }
 

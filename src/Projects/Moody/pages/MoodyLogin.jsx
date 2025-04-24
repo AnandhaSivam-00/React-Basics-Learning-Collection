@@ -8,6 +8,7 @@ import {
   useSearchParams
 } from 'react-router-dom'
 import { Server } from 'miragejs'
+import { motion } from 'framer-motion'
 
 import { GoogleIcon } from '../assets/Icons'
 import { auth } from '../../../config/firebaseConfig'
@@ -126,6 +127,21 @@ const moodyCreateUser = async ({ email, password }) => {
   }
 }
 
+const messageAnimationVariants = {
+  initial: {
+    opacity: 0,
+    y: -20,
+  },
+  messageIn: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: 'easeInOut',
+    },
+  },
+}
+
 const MoodyLogin = () => {
   const loaderData = useLoaderData();
   const actionData = useActionData();
@@ -154,7 +170,7 @@ const MoodyLogin = () => {
     <section className='moody-login-container'>
       <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
         <h1 className='moody-login-title text-center'>
-          <TextRevealAnimation text='Moody' />
+          <TextRevealAnimation text='Moody Enterance' />
         </h1>
         <Form
           method='POST'
@@ -213,19 +229,37 @@ const MoodyLogin = () => {
         </Form>
       </div>
       {loaderData?.message && (
-        <span className='alert alert-danger mt-3' role='alert'>
+        <motion.span 
+          className='alert alert-danger mt-3' 
+          role='alert'
+          variants={messageAnimationVariants}
+          initial='initial'
+          animate='messageIn'
+        >
           {loaderData.message}
-        </span>
+        </motion.span>
       )}
       {actionData?.error && (
-        <span className='alert alert-danger mt-3' role='alert'>
+        <motion.span 
+          className='alert alert-danger mt-3' 
+          role='alert'
+          variants={messageAnimationVariants}
+          initial='initial'
+          animate='messageIn'
+        >
           {actionData.error}
-        </span>
+        </motion.span>
       )}
       {actionData?.message && (
-        <span className='alert alert-success mt-3' role='alert'>
+        <motion.span 
+          className='alert alert-success mt-3' 
+          role='alert'
+          variants={messageAnimationVariants}
+          initial='initial'
+          animate='messageIn'
+        >
           {actionData.message}
-        </span>
+        </motion.span>
       )}
     </section>
   )

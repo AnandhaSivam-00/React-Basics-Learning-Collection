@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Avatar, Button, Tooltip } from 'antd'
+import { motion } from 'framer-motion'
 
 import { AvatarDefaultIcon } from '../../../assets/Icons'
 import { DeleteBucketIcon, UploadCloudIcon } from '../assets/Icons'
@@ -80,12 +81,25 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
                         </Tooltip>
                     )}
                     {avatarUrl ? (
-                        <Avatar
-                            src={avatarUrl}
-                            size={62}
-                            alt='Uploaded Avatar'
-                            style={{ border: '1px solid #FFDE00' }}
-                        />
+                        <motion.div
+                            whileHover={{
+                                scale: 1.8,
+                                transition: {
+                                    duration: 0.2,
+                                    type: 'spring',
+                                    stiffness: 100,
+                                    damping: 10,
+                                }
+                            }}
+                        >
+                            <Avatar
+                                src={avatarUrl}
+                                size={62}
+                                alt='Uploaded Avatar'
+                                style={{ border: '1px solid #FFDE00' }}
+                                className='shadow-sm'
+                            />
+                        </motion.div>
                     ) : (
                         <Avatar
                             size={62}

@@ -2,6 +2,7 @@ import React, { lazy, useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 
 const FlexNavBar = lazy(() => import('./components/FlexNavBar'))
+import PageTransition from './components/PageTransition'
 import { auth } from '../../config/firebaseConfig'
 
 import './styles.css'
@@ -30,8 +31,7 @@ const Moody = () => {
           photoURL={userData?.photoURL} 
           setUserData={setUserData}
         />
-       {/* <p className='absolute'>Gggggggg</p> */}
-       <Outlet context={{ userData, setUserData }} />
+        <Outlet context={{ userData, setUserData }} />
     </div>
   )
 }

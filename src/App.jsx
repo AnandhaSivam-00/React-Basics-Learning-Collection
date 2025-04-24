@@ -181,43 +181,27 @@ const router = createBrowserRouter(createRoutesFromElements(
     >
         <Route
             index
-            element={
-                <PageTransition>
-                    <MoodyHome />
-                </PageTransition>
-            }
+            element={<MoodyHome />}
             loader={moodyPostLoader}
             action={moodyPostAction}
             errorElement={<Errors />}
         />
         <Route
             path='post-feeds'
-            element={
-                <PageTransition>
-                <Feeds />
-                </PageTransition>
-            }
+            element={<Feeds />}
             loader={moodyFeedsLoader}
             errorElement={<Errors />}
         />
         <Route
             path='profile-update'
-            element={
-                <PageTransition>
-                    <UpdateProfile />
-                </PageTransition>
-            }
+            element={<UpdateProfile />}
             errorElement={<Errors />}
             loader={moodyUpdateProfileLoader}
             action={moodyUpdateProfileAction}
         />
         <Route
             path='about'
-            element={
-                <PageTransition>
-                    <AboutPage />
-                </PageTransition>
-            }
+            element={<AboutPage />}
             loader={async ({ request }) => await requireFirebaseAuth(request)}
             errorElement={<Errors />}
         />
@@ -227,7 +211,7 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 const App = () => {
     return (
-        <AnimatePresence mode='wait'>
+        <AnimatePresence mode='wait' exitBeforeEnter>
             <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
                 <RouterProvider router={router} />
             </Suspense>
