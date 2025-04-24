@@ -13,7 +13,7 @@ const TextRevealAnimation = ({ text }) => {
                         className='relative'
                     >
                         <motion.span 
-                            className='p-0 animaiton-text'
+                            className='p-0 animation-text'
                             initial={{
                                 opacity: 0
                             }}
