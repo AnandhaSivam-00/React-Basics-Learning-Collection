@@ -7,7 +7,7 @@ import {
   useSpring, 
   spring
 } from 'framer-motion'
-import './App.css'
+import './App.module.css'
 import ProgressBar from './components/ProgressBar'
 import Square from './components/Square'
 import DraggableCircle from './components/DraggableCircle'
