@@ -1,8 +1,9 @@
 import ReactDOM, { createRoot } from 'react-dom/client'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom';
-import './App.css'
+import './App.module.css'
 import App from './App.jsx'
+// import App from './Redux-Learning/App';
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
