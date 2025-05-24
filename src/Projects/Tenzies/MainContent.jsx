@@ -77,6 +77,7 @@ const MainContent = () => {
                 !die.isClicked ? { ...die, value: Math.ceil(Math.random() * 9) } : die
             )
         ));
+        setButtonClickCount((prevCount) => prevCount + 1);
     }
 
     const holdDie = (id) => {
@@ -85,7 +86,6 @@ const MainContent = () => {
             )
         ) )
 
-        setButtonClickCount((prevCount) => prevCount + 1);
     }
 
     const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
