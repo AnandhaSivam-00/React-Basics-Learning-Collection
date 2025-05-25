@@ -1,0 +1,171 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { app, db, auth } from '../../../../config/firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore/lite';
+
+const initialState = {
+    loading: false,
+    isAuthenticated: false,
+    credential: null,
+    error: false
+}
+
+export const loginUserAction = createAsyncThunk(
+    'user-auth/loginUserAction',
+    async (loginData, {rejectWithValue}) => {
+        try {
+            const response = await signInWithEmailAndPassword(
+                auth, 
+                loginData.email || loginData.username,
+                loginData.password
+            );
+
+            return {
+                uid: response.user.uid,
+                email: response.user.email,
+                displayName: response.user.displayName,
+                accessToken: response.user.accessToken
+            };
+        } 
+        catch(error) {
+            const errorCode = error.code;
+            let errorMessage;
+            
+            switch(errorCode) {
+                case 'auth/invalid-email':
+                    errorMessage = 'Invalid email format.';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'This account has been disabled.';
+                    break;
+                case 'auth/user-not-found':
+                    errorMessage = 'No account found with this email.';
+                    break;
+                case 'auth/wrong-password':
+                    errorMessage = 'Incorrect password.';
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Too many failed login attempts. Try again later.';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Network error. Check your connection.';
+                    break;
+                case 'auth/invalid-credential':
+                    errorMessage = 'Invalid credentials provided.';
+                    break;
+                default:
+                    errorMessage = 'Login failed. Please try again.';
+            }
+            
+            return rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const registerUserAction = createAsyncThunk(
+    'user-auth/registerUserAction',
+    async (userData, {rejectWithValue}) => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(
+                auth, 
+                userData.email,
+                userData.password
+            );
+
+            const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userCredential.user.uid);
+            await setDoc(userRef, {
+                user_id: userCredential.user.uid,
+                user_name: userData.name,
+                phone_number: Number(userData.phone_number) || 0,
+                email: userData.email,
+                gender: userData.gender,
+                about_me: userData.about_me || '',
+                isAgreeAgreements: userData.agreement_status,
+                created_at: new Date(),
+                updated_at: new Date(),
+            })
+
+            return userCredential.user.accessToken;
+        }
+        catch(error) {
+            const errorCode = error.code;
+            let errorMessage;
+            
+            switch(errorCode) {
+                case 'auth/email-already-in-use':
+                    errorMessage = 'This email is already registered.';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = 'Invalid email format.';
+                    break;
+                case 'auth/operation-not-allowed':
+                    errorMessage = 'Email/password accounts are not enabled.';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage = 'Password is too weak. Use at least 6 characters.';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Network error. Check your connection.';
+                    break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Too many requests. Try again later.';
+                    break;
+                default:
+                    errorMessage = 'Registration failed. Please try again.';
+            }
+            
+            return rejectWithValue(errorMessage);
+        }
+    }
+)
+
+const authSlice = createSlice({
+    name: 'user-auth',
+    initialState,
+    reducers: {
+        logoutUserAction: () => {
+            signOut(auth).then(() => {
+                  console.log('User signed out successfully!');
+                }).catch((error) => {
+                  console.error('Error signing out user:', error);
+                });
+
+            return {
+                ...initialState,
+                isAuthenticated: false,
+                credential: {
+                    logout: true
+                },
+                error: false
+            };
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginUserAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginUserAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.credential = action.payload;
+            })
+            .addCase(loginUserAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(registerUserAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(registerUserAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.credential = action.payload;
+            })
+            .addCase(registerUserAction.rejected, (state, action) => {
+                state.loging = false;
+                state.error = action.payload;
+            })
+    }
+})
+
+export default authSlice.reducer;

@@ -27,7 +27,8 @@ const ChiefMistral = lazy(() => import('./Projects/Chief Mistral/ChiefMistral'))
 
 const MemeGenerator = lazy(() => import('./Projects/Meme Generator/MemeGenerator'));
 
-const MainContent = lazy(() => import('./Projects/Tenzies/MainContent'));
+// const Tenzies = lazy(() => import('./Projects/Tenzies/index'));
+import Tenzies from './Projects/Tenzies/index';
 
 const MainGamePage = lazy(() => import('./Projects/Assembly EndGame/MainGamePage'));
 
@@ -79,8 +80,13 @@ const router = createBrowserRouter(createRoutesFromElements(
         <Route path="/reactfacts" element={<ReactFacts />} />
         <Route path="/travel-journal" element={<TravelJournal />} />
         <Route path='/meme-generator' element={<MemeGenerator />} />
-        <Route path='/tenzies-game' element={<MainContent />} />
         <Route path='/assembly-endgame' element={<MainGamePage />} />
+        <Route path='/tenzies-game' >
+            <Route index element={<Tenzies.MainContent />} />
+            <Route path='login' element={<Tenzies.Login />} />
+            <Route path='sign-up' element={<Tenzies.SignUp />} />
+            <Route path='leaderboard' element={<Tenzies.LeaderBoard />} />
+        </Route>
         <Route path='/vanslife' element={<MainLayout />} >
             <Route index element={<Home />} />
             <Route
