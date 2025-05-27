@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { app, db, auth } from '../../../../config/firebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { db, auth } from '../../../../config/firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore/lite';
 
 const initialState = {
@@ -12,10 +12,10 @@ const initialState = {
 
 export const loginUserAction = createAsyncThunk(
     'user-auth/loginUserAction',
-    async (loginData, {rejectWithValue}) => {
+    async (loginData, { rejectWithValue }) => {
         try {
             const response = await signInWithEmailAndPassword(
-                auth, 
+                auth,
                 loginData.email || loginData.username,
                 loginData.password
             );
@@ -26,12 +26,12 @@ export const loginUserAction = createAsyncThunk(
                 displayName: response.user.displayName,
                 accessToken: response.user.accessToken
             };
-        } 
-        catch(error) {
+        }
+        catch (error) {
             const errorCode = error.code;
             let errorMessage;
-            
-            switch(errorCode) {
+
+            switch (errorCode) {
                 case 'auth/invalid-email':
                     errorMessage = 'Invalid email format.';
                     break;
@@ -56,7 +56,7 @@ export const loginUserAction = createAsyncThunk(
                 default:
                     errorMessage = 'Login failed. Please try again.';
             }
-            
+
             return rejectWithValue(errorMessage);
         }
     }
@@ -64,18 +64,36 @@ export const loginUserAction = createAsyncThunk(
 
 export const registerUserAction = createAsyncThunk(
     'user-auth/registerUserAction',
-    async (userData, {rejectWithValue}) => {
+    async (userData, { rejectWithValue }) => {
+        const userSettingsData ={
+            trail_mode: false,
+            dark_mode: false,
+            show_on_lb: true,
+            send_emails: false
+        }
+        const GHSData = {
+            total_attempts: 0,
+            lb_rank: 'N/A',
+            highest_clicks: 0,
+            lowest_clicks: 0,
+            fastest_finish: '00:00:00',
+            latest_attempt_at: 'N/A'
+        }
+
         try {
+            // Creating the authentication entry on firebase authentication
             const userCredential = await createUserWithEmailAndPassword(
-                auth, 
+                auth,
                 userData.email,
                 userData.password
             );
 
+            // Set users personal data
             const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userCredential.user.uid);
             await setDoc(userRef, {
                 user_id: userCredential.user.uid,
-                user_name: userData.name,
+                name: userData.name,
+                user_name: '',
                 phone_number: Number(userData.phone_number) || 0,
                 email: userData.email,
                 gender: userData.gender,
@@ -83,15 +101,27 @@ export const registerUserAction = createAsyncThunk(
                 isAgreeAgreements: userData.agreement_status,
                 created_at: new Date(),
                 updated_at: new Date(),
-            })
+            });
+
+            // Set user's settings data
+            const userSettingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userCredential.user.uid, 'Data', 'settings-data');
+            await setDoc(userSettingsRef, {
+                ...userSettingsData
+            });
+
+            // Set user's game history
+            const userGHSRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userCredential.user.uid, 'Data', 'game-history');
+            await setDoc(userGHSRef, {
+                ...GHSData
+            });
 
             return userCredential.user.accessToken;
         }
-        catch(error) {
+        catch (error) {
             const errorCode = error.code;
             let errorMessage;
-            
-            switch(errorCode) {
+
+            switch (errorCode) {
                 case 'auth/email-already-in-use':
                     errorMessage = 'This email is already registered.';
                     break;
@@ -113,7 +143,7 @@ export const registerUserAction = createAsyncThunk(
                 default:
                     errorMessage = 'Registration failed. Please try again.';
             }
-            
+
             return rejectWithValue(errorMessage);
         }
     }
@@ -123,21 +153,22 @@ const authSlice = createSlice({
     name: 'user-auth',
     initialState,
     reducers: {
-        logoutUserAction: () => {
-            signOut(auth).then(() => {
-                  console.log('User signed out successfully!');
-                }).catch((error) => {
-                  console.error('Error signing out user:', error);
+        logoutUserAction: (state) => {
+            signOut(auth)
+                .then(() => {
+                    console.log('User signed out successfully!');
+                    state.isAuthenticated = false;
+                    state.credential = {
+                        logout: true
+                    }
+                    state.loading = false;
+                    state.error = false;
+                })
+                .catch((error) => {
+                    console.error('Error signing out user:', error.message);
+                    state.error = error.message;
                 });
 
-            return {
-                ...initialState,
-                isAuthenticated: false,
-                credential: {
-                    logout: true
-                },
-                error: false
-            };
         }
     },
     extraReducers: (builder) => {
