@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useSelector, useDispatch, Provider } from 'react-redux';
-import { Button, Form, Input, Flex, ConfigProvider, Divider, notification, Checkbox } from 'antd';
+import { 
+  Button, 
+  Form, 
+  Input, 
+  Flex, 
+  ConfigProvider, 
+  Divider, 
+  notification, 
+  Checkbox,
+  Alert
+} from 'antd';
 
 import store from '../redux/app/store';
 import { loginUserAction, clearAuthError } from '../redux/features/authSlice';
@@ -16,12 +26,18 @@ const LoginComponent = () => {
 
   const [visiblePassword, setVisiblePassword] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
     if(isAuthenticated) {
-      navigate('..');
+      if(searchParams.get('redirectTo')) {
+        navigate(searchParams.get('redirectTo'), { replace: true });
+      }
+      else {
+        navigate('..');
+      }
     }
 
     if(error && typeof error === 'string') {
@@ -108,6 +124,16 @@ const LoginComponent = () => {
               <a href="">Forgot password</a>
             </Flex>
           </Form.Item>
+
+          {searchParams.get('message') && (
+            <Alert
+              message={searchParams.get('message')}
+              type="warning"
+              showIcon
+              className='mb-4'
+              closable
+            />
+          )}
 
           <Form.Item className='d-flex justify-content-center items-center'>
             <Button
