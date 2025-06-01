@@ -16,7 +16,7 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
-        if(isSettingsModalOpen) {
+        if(isSettingsModalOpen && credential?.uid && !settingsData) {
             dispatch(fetchUserSettingData(credential.uid));
         }
 

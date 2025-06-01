@@ -13,11 +13,10 @@ import {
   Divider
 } from 'antd';
 
-import { 
-  fetchUserGameHistory, 
-  fetchUserPersonalData, 
-  updateUserPersonalData 
-} from '../redux/features/userSlice';
+import { fetchUserPersonalData, updateUserPersonalData } from '../redux/features/userSlice';
+import { fetchUserGameHistory } from '../redux/features/userLogSlice';
+
+import { formatFirebaseTimestamp } from '../utils/DateTimeFormatting'
 
 const { Option } = Select;
 
@@ -34,7 +33,8 @@ const formItemLayout = {
 
 const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen }) => {
   const { credential } = useSelector((state) => state.auth);
-  const { loading, error, userData, gameHistory } = useSelector((state) => state.user);
+  const { loading, error, userData } = useSelector((state) => state.user);
+  const { gameHistory, loading:logLoading } = useSelector((state) => state.userlog);
   const dispatch = useDispatch();
 
   const [editMode, setEditMode] = useState(false);
@@ -59,8 +59,11 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
   }, [userData, form]);
 
   useEffect(() => {
-    if(isUserAccountModalOpen && credential?.uid) {
+    if(isUserAccountModalOpen && credential?.uid && !userData.length) {
       dispatch(fetchUserPersonalData(credential.uid));
+    }
+    
+    if(isUserAccountModalOpen && credential?.uid && !gameHistory.length) {
       dispatch(fetchUserGameHistory(credential.uid));
     }
 
@@ -153,7 +156,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
         <Modal
           title={<h2><b>Account</b></h2>}
           open={isUserAccountModalOpen}
-          loading={loading}
+          loading={loading || logLoading}
           closable={false}
           maskClosable={false}
           centered
@@ -238,7 +241,11 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
                 </Form.Item>
 
                 <p className='text-secondary italic text-xs'>
-                  Latest updation on {userData?.updated_at || 'N/A'}
+                  Latest updation on {
+                    (typeof userData?.updated_at === 'string' 
+                      ? userData?.updated_at 
+                      : formatFirebaseTimestamp(userData?.updated_at)
+                    ) || 'N/A'}
                 </p>
 
                 {editMode && (
@@ -255,12 +262,20 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
               <Divider plain />
 
               <h5 className='mb-4'>Game Health Status</h5>
-              <p>Total Attempts: {gameHistory.total_attempts || 'N/A'}</p>
-              <p>Leader Board Rank: {gameHistory.lb_rank || 'N/A'}</p>
-              <p>Highest Clicks: {gameHistory.highest_clicks || 'N/A'}</p>
-              <p>Lowest Clicks: {gameHistory.lowest_clicks || 'N/A'}</p>
-              <p>Fastest finish: {gameHistory.fastest_finish || 'N/A'}</p>
-              <p>Latest Attempt at: {gameHistory.latest_attempt_at || 'N/A'}</p>
+              {isUserAccountModalOpen && (
+                <>
+                  <p>Total Attempts: {gameHistory.total_attempts || 'N/A'}</p>
+                  <p>Leader Board Rank: {gameHistory.lb_rank || 'N/A'}</p>
+                  <p>Highest Clicks: {gameHistory.highest_clicks || 'N/A'}</p>
+                  <p>Lowest Clicks: {gameHistory.lowest_clicks || 'N/A'}</p>
+                  <p>Fastest finish: {gameHistory.fastest_finish || 'N/A'}</p>
+                  <p>Latest Attempt at: {
+                    typeof gameHistory.latest_attempt_at === 'string' 
+                    ? gameHistory.latest_attempt_at 
+                    : formatFirebaseTimestamp(gameHistory.latest_attempt_at) || 'N/A'}
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </Modal>

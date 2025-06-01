@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { db } from '../../../../config/firebaseConfig';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore/lite';
+
+import { formatFirebaseTimestamp, formatCurrentDateTime } from '../../utils/DateTimeFormatting';
 
 const initialState = {
     loading: false,
     userData: [],
     settingsData: [],
-    gameHistory: [],
     error: false
 }
 
@@ -22,38 +23,17 @@ export const fetchUserPersonalData = createAsyncThunk(
 
                 return {
                     ...data,
-                    created_at: data.created_at.toDate().toLocaleDateString(),
-                    updated_at: data.updated_at.toDate().toLocaleDateString(),
+                    created_at: formatFirebaseTimestamp(data.created_at),
+                    updated_at: formatFirebaseTimestamp(data.updated_at),
                 }
             } 
             else {
-                console.log('No such document!');
-                return rejectWithValue('No user data found');
+                throw new Error('No personal data document found');
             }
         } 
         catch(error) {
+            console.error('Error fetching user data:', error);
             return rejectWithValue('Error fetching user data: ' + error.message);
-        }
-    }
-)
-
-export const fetchUserGameHistory = createAsyncThunk(
-    'user-data/fetchUserGameHistory',
-    async (userId, { rejectWithValue }) => {
-        try {
-            const historyRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userId, 'Data', 'game-history');
-            const historySnapshot = await getDoc(historyRef);
-
-            if(historySnapshot.exists()) {
-                return historySnapshot.data();
-            }
-            else {
-                console.log('No such document!');
-                return rejectWithValue('No game history data found');
-            }
-        }
-        catch(error) {
-            return rejectWithValue('Error fetching user\'s game history..' + error.message);
         }
     }
 )
@@ -70,15 +50,15 @@ export const fetchUserSettingData = createAsyncThunk(
 
                 return {
                     ...settings,
-                    updated_at: settings.updated_at.toDate().toLocaleDateString(),
+                    updated_at: formatFirebaseTimestamp(settings.updated_at),
                 }
             }
             else {
-                console.log('No such document!');
-                return rejectWithValue('No setting data found');
+                throw new Error('No setting data document found');
             }
         }
         catch(error) {
+            console.error('Error fetching user\'s settings data:', error);
             return rejectWithValue('Error fetching user\'s settings data..' + error.message);
         }
     }
@@ -91,10 +71,14 @@ export const updateUserPersonalData = createAsyncThunk(
             const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userData.user_id);
             await updateDoc(userRef, {
                 ...userData,
-                updated_at: new Date()
+                updated_at: serverTimestamp()
             });
             console.log('User data updated successfully:', userData);
-            return userData;
+
+            return {
+                ...userData,
+                updated_at: formatCurrentDateTime(),
+            };
         }
         catch(error) {
             console.error('Error updating user data:', error);
@@ -110,12 +94,13 @@ export const updateUserSettingsData = createAsyncThunk(
             const settingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userId, 'Data', 'settings-data');
             await updateDoc(settingsRef, {
                 ...settingsData,
-                updated_at: new Date()
+                updated_at: serverTimestamp()
             });
             console.log(settingsData);
             return settingsData;
         }
         catch(error) {
+            console.error('Error updating user settings data:', error);
             return rejectWithValue('Error updating user settings data: ' + error.message);
         }
     }
@@ -124,6 +109,11 @@ export const updateUserSettingsData = createAsyncThunk(
 const userSlice = createSlice({
     name: 'user-data',
     initialState,
+    reducers: {
+        clearError: (state) => {
+            state.error = false;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchUserPersonalData.pending, (state) => {
@@ -134,17 +124,6 @@ const userSlice = createSlice({
                 state.userData = action.payload;
             })
             .addCase(fetchUserPersonalData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            .addCase(fetchUserGameHistory.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchUserGameHistory.fulfilled, (state, action) => {
-                state.loading = false;
-                state.gameHistory = action.payload;
-            })
-            .addCase(fetchUserGameHistory.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
@@ -184,4 +163,5 @@ const userSlice = createSlice({
     }
 })
 
+export const { clearError } = userSlice.actions;
 export default userSlice.reducer;

@@ -77,7 +77,7 @@ const FeaturesBar = () => {
                     <Tooltip title='Leaderboard' placement='top'>
                         <Button
                             className='px-2'
-                            href='leaderboard'
+                            href='tenzies-game/leaderboard'
                         >
                             <LeaderboardIcon width={20} height={20} />
                         </Button>

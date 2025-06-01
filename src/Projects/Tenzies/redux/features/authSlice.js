@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db, auth } from '../../../../config/firebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore/lite';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
+
+import { formatFirebaseTimestamp } from '../../utils/DateTimeFormatting';
 
 const initialState = {
     loading: false,
@@ -27,7 +29,8 @@ export const loginUserAction = createAsyncThunk(
                 accessToken: response.user.accessToken
             };
         }
-        catch (error) {
+        catch(error) {
+            console.error('Error logging in user:', error);
             const errorCode = error.code;
             let errorMessage;
 
@@ -99,8 +102,8 @@ export const registerUserAction = createAsyncThunk(
                 gender: userData.gender,
                 about_me: userData.about_me || '',
                 isAgreeAgreements: userData.agreement_status,
-                created_at: new Date(),
-                updated_at: new Date(),
+                created_at: serverTimestamp(),
+                updated_at: serverTimestamp(),
             });
 
             // Set user's settings data
@@ -118,6 +121,7 @@ export const registerUserAction = createAsyncThunk(
             return userCredential.user.accessToken;
         }
         catch (error) {
+            console.error('Error registering user:', error);
             const errorCode = error.code;
             let errorMessage;
 
@@ -169,6 +173,9 @@ const authSlice = createSlice({
                     state.error = error.message;
                 });
 
+        },
+        clearError: (state) => {
+            state.error = false;
         }
     },
     extraReducers: (builder) => {
@@ -199,4 +206,5 @@ const authSlice = createSlice({
     }
 })
 
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;
