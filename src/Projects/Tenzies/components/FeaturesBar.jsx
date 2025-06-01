@@ -14,6 +14,8 @@ import '../index.css'
 import SettingsModal from './SettingsModal'
 import UserAccountModal from './UserAccountModal'
 
+import { clearAuthError, logoutUserAction } from '../redux/features/authSlice'
+
 const FeaturesBar = () => {
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [isUserAccountModalOpen, setIsUserAccountModalOpen] = useState(false);
@@ -25,6 +27,13 @@ const FeaturesBar = () => {
 
     const [api, contextHolder] = notification.useNotification();
 
+    // Clear errors on component unmount
+    useEffect(() => {
+        return () => {
+            dispatch(clearAuthError());
+        };
+    }, [dispatch]);
+
     const handleLogout = () => {
         Modal.confirm({
             title: 'Are you sure you want to logout?',
@@ -33,13 +42,14 @@ const FeaturesBar = () => {
             okType: 'danger',
             cancelText: 'Cancel',
             onOk: () => {
-                dispatch({ type: 'user-auth/logoutUserAction' });
+                dispatch(clearAuthError());
+                dispatch(logoutUserAction());
             }
         })
     }
 
     useEffect(() => {
-        if(credential?.logout) {
+        if (credential?.logout) {
             api.success({
                 placement: 'bottomRight',
                 message: 'Logout Successful',
@@ -55,6 +65,9 @@ const FeaturesBar = () => {
                 placement: 'bottomRight',
                 message: 'Logout Failed',
                 description: error,
+                onClose: () => {
+                    dispatch(clearAuthError());
+                }
             });
         }
     }, [credential, error]);
@@ -99,11 +112,11 @@ const FeaturesBar = () => {
                     </Tooltip>
                 </ConfigProvider>
             </div>
-            <SettingsModal 
+            <SettingsModal
                 isSettingsModalOpen={isSettingsModalOpen}
                 setIsSettingsModalOpen={setIsSettingsModalOpen}
             />
-            <UserAccountModal 
+            <UserAccountModal
                 isUserAccountModalOpen={isUserAccountModalOpen}
                 setIsUserAccountModalOpen={setIsUserAccountModalOpen}
             />

@@ -218,7 +218,7 @@ const userLogSlice = createSlice({
     name: "user-log",
     initialState,
     reducers: {
-        clearError: (state) => {
+        clearUserLogError: (state) => {
             state.error = false;
         }
     },
@@ -260,5 +260,5 @@ const userLogSlice = createSlice({
     }
 })
 
-export const { clearError } = userLogSlice.actions;
+export const { clearUserLogError } = userLogSlice.actions;
 export default userLogSlice.reducer;

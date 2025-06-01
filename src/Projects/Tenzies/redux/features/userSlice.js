@@ -110,7 +110,7 @@ const userSlice = createSlice({
     name: 'user-data',
     initialState,
     reducers: {
-        clearError: (state) => {
+        clearUserError: (state) => {
             state.error = false;
         }
     },
@@ -163,5 +163,5 @@ const userSlice = createSlice({
     }
 })
 
-export const { clearError } = userSlice.actions;
+export const { clearUserError } = userSlice.actions;
 export default userSlice.reducer;

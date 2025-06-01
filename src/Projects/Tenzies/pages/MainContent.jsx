@@ -14,8 +14,9 @@ import store from '../redux/app/store';
 import { formatTimeDuration } from '../utils/TimeFormatting';
 import '../index.css'
 
-import { fetchUserSettingData } from '../redux/features/userSlice';
-import { addUserLog, updateUserLogStatistics, fetchUserGameHistory } from '../redux/features/userLogSlice';
+import { clearUserError, fetchUserSettingData } from '../redux/features/userSlice';
+import { addUserLog, updateUserLogStatistics, fetchUserGameHistory, clearUserLogError } from '../redux/features/userLogSlice';
+import { clearAuthError } from '../redux/features/authSlice';
 // import Timer from './components/Timer';
 
 const MainContentComponent = () => {
@@ -37,9 +38,9 @@ const MainContentComponent = () => {
             })) // Change the array elements using map method
     }
 
-    const { credential, isAuthenticated } = useSelector((state) => state.auth);
+    const { credential, isAuthenticated, error } = useSelector((state) => state.auth);
     const { settingsData } = useSelector((state) => state.user);
-    const { loading, error } = useSelector((state) => state.userlog);
+    const { loading, error:logerror } = useSelector((state) => state.userlog);
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -62,16 +63,21 @@ const MainContentComponent = () => {
     const buttonRef = useRef(null);
 
     useEffect(() => {
-        if (!isAuthenticated && !credential) {
-            navigate('login');
+        if(!isAuthenticated && error instanceof Array) {
+            navigate(error[1]);
+
+            dispatch(clearAuthError());
         }
 
-        if (error) {
+        if(logerror) {
             api.error({
                 placement: 'bottomRight',
                 message: 'Error occurred while fetching data',
                 description: error,
             })
+
+            dispatch(clearUserError());
+            dispatch(clearUserLogError());
         }
 
         if (isAuthenticated && credential && !settingsData.length) {
@@ -96,6 +102,8 @@ const MainContentComponent = () => {
 
             // Focus the button as before
             buttonRef.current.focus();
+
+            dispatch(clearUserLogError());
 
             if(!settingsData.trail_mode && isAuthenticated && credential) {
                 dispatch(addUserLog({
@@ -178,13 +186,13 @@ const MainContentComponent = () => {
         setGameDuration(0);
     }
 
-    useEffect(() => {
-        messageApi.open({
-            key: 'updatable',
-            type: loading ? 'loading' : 'success',
-            content: loading ? 'syncing data...' : 'Data synced!',
-        })
-    }, [loading]);
+    // useEffect(() => {
+    //     messageApi.open({
+    //         key: 'updatable',
+    //         type: loading ? 'loading' : 'success',
+    //         content: loading ? 'syncing data...' : 'Data synced!',
+    //     })
+    // }, [loading]);
 
 
     return (

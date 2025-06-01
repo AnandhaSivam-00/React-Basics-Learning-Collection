@@ -4,7 +4,7 @@ import { useSelector, useDispatch, Provider } from 'react-redux';
 import { Button, Form, Input, Flex, ConfigProvider, Divider, notification, Checkbox } from 'antd';
 
 import store from '../redux/app/store';
-import { loginUserAction } from '../redux/features/authSlice';
+import { loginUserAction, clearAuthError } from '../redux/features/authSlice';
 
 import { LoginUserIcon, PasswordIcon, EmailIcon, GoogleIcon } from '../assets/Icons/Icons';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
@@ -24,7 +24,7 @@ const LoginComponent = () => {
       navigate('..');
     }
 
-    if(error) {
+    if(error && typeof error === 'string') {
       api.error({
         placement: 'bottomRight',
         message: 'Login Failed',
@@ -34,6 +34,8 @@ const LoginComponent = () => {
   }, [isAuthenticated, error]);
 
   const onFinish = (values) => {
+    // Clearing the errors before the another dispatch to avoid the miss match of error messages
+    dispatch(clearAuthError());
     dispatch(loginUserAction(values));
   };
 

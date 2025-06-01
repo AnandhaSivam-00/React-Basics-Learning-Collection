@@ -13,8 +13,8 @@ import {
   Divider
 } from 'antd';
 
-import { fetchUserPersonalData, updateUserPersonalData } from '../redux/features/userSlice';
-import { fetchUserGameHistory } from '../redux/features/userLogSlice';
+import { clearUserError, fetchUserPersonalData, updateUserPersonalData } from '../redux/features/userSlice';
+import { clearUserLogError, fetchUserGameHistory } from '../redux/features/userLogSlice';
 
 import { formatFirebaseTimestamp } from '../utils/DateTimeFormatting'
 
@@ -115,6 +115,9 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
       });
     } 
     else {
+      dispatch(clearUserError());
+      dispatch(clearUserLogError());
+
       setIsUserAccountModalOpen(false);
     }
   }
@@ -125,6 +128,9 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
   }
 
   const onFinish = (values) => {
+    dispatch(clearUserError());
+    dispatch(clearUserLogError());
+
     form.setFieldsValue({
       email: values.email,
       name: values.name,

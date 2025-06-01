@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Modal, Switch, ConfigProvider, notification } from 'antd'
 
-import { fetchUserSettingData, updateUserSettingsData } from '../redux/features/userSlice'
+import { clearUserError, fetchUserSettingData, updateUserSettingsData } from '../redux/features/userSlice'
 
 import '../index.css'
 
@@ -36,6 +36,8 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
     }, [settingsData]);
 
     const handleSave = () => {
+        dispatch(clearUserError());
+
         dispatch(updateUserSettingsData({
             settingsData: settings,
             userId: credential.uid
@@ -79,7 +81,10 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
                     okType='primary'
                     onOk={handleSave}
                     cancelText='Cancel'
-                    onCancel={() => setIsSettingsModalOpen(prev => !prev)}
+                    onCancel={() => {
+                        dispatch(clearUserError());
+                        setIsSettingsModalOpen(prev => !prev)
+                    }}
                 >
                     <div className='row my-4'>
                         <div className='col-6 d-flex flex-column justify-content-center align-items-start gap-y-4'>

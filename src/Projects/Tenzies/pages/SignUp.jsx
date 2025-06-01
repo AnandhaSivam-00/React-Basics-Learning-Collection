@@ -12,7 +12,7 @@ import {
 } from 'antd';
 
 import store from '../redux/app/store';
-import { registerUserAction } from '../redux/features/authSlice';
+import { clearAuthError, registerUserAction } from '../redux/features/authSlice';
 
 import '../index.css';
 
@@ -49,6 +49,10 @@ const SignUpComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    dispatch(clearAuthError());
+  }, [dispatch]);
+
+  useEffect(() => {
     if(!isAuthenticated && credential) {
       api.success({
         placement: 'bottomRight',
@@ -75,6 +79,7 @@ const SignUpComponent = () => {
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
+    dispatch(clearAuthError());
     dispatch(registerUserAction(values));
   };
   

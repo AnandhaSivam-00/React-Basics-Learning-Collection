@@ -1,6 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db, auth } from '../../../../config/firebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    setPersistence, 
+    browserLocalPersistence,
+    browserSessionPersistence,
+} from 'firebase/auth';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
 import { formatFirebaseTimestamp } from '../../utils/DateTimeFormatting';
@@ -12,10 +19,62 @@ const initialState = {
     error: false
 }
 
+export const requireAuthUser = createAsyncThunk(
+    'user-auth/requireAuthUser',
+    async (request, { rejectWithValue }) => {
+        const browserPath = new URL(request.url).pathname;
+
+        try {
+            // Create a Promise and immediately return its result
+            const user = await new Promise((resolve, reject) => {
+                const unsubscribe = auth.onAuthStateChanged((user) => {
+                    unsubscribe();
+                    if(user) {
+                        resolve(user);
+                    } 
+                    else {
+                        reject(new Error("Not authenticated"));
+                    }
+                });
+            });
+            
+            // If we get here, authentication succeeded
+            return {
+                accessToken: user.accessToken,
+                uid: user.uid,
+            };
+        } 
+        catch(error) {
+            // Here we handle the rejected promise and call rejectWithValue
+            return rejectWithValue([
+                'Authentication failed. Please login or create an account.',
+                `/tenzies-game/login?message=You must login or create an account first!&redirectTo=${browserPath}`
+            ]);
+        }
+    }
+)
+
+export const logoutUserAction = createAsyncThunk(
+    'user-auth/logoutUserAction',
+    async (_, { rejectWithValue }) => {
+        try {
+            await signOut(auth);
+            console.log('User logged out successfully');
+            return null; 
+        }
+        catch(error) {
+            console.error('Error logging out user:', error);
+            return rejectWithValue('Logout failed. Please try again.');
+        }
+    }
+)
+
 export const loginUserAction = createAsyncThunk(
     'user-auth/loginUserAction',
     async (loginData, { rejectWithValue }) => {
         try {
+            await setPersistence(auth, browserSessionPersistence);
+
             const response = await signInWithEmailAndPassword(
                 auth,
                 loginData.email || loginData.username,
@@ -157,24 +216,7 @@ const authSlice = createSlice({
     name: 'user-auth',
     initialState,
     reducers: {
-        logoutUserAction: (state) => {
-            signOut(auth)
-                .then(() => {
-                    console.log('User signed out successfully!');
-                    state.isAuthenticated = false;
-                    state.credential = {
-                        logout: true
-                    }
-                    state.loading = false;
-                    state.error = false;
-                })
-                .catch((error) => {
-                    console.error('Error signing out user:', error.message);
-                    state.error = error.message;
-                });
-
-        },
-        clearError: (state) => {
+        clearAuthError: (state) => {
             state.error = false;
         }
     },
@@ -203,8 +245,37 @@ const authSlice = createSlice({
                 state.loging = false;
                 state.error = action.payload;
             })
+            .addCase(requireAuthUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(requireAuthUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.credential = action.payload;
+            })
+            .addCase(requireAuthUser.rejected, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.credential = null;
+                state.error = action.payload;
+            })
+            .addCase(logoutUserAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(logoutUserAction.fulfilled, (state) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.credential = {
+                    logout: true
+                };
+                state.error = false;
+            })
+            .addCase(logoutUserAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     }
 })
 
-export const { clearError } = authSlice.actions;
+export const { clearAuthError } = authSlice.actions;
 export default authSlice.reducer;
