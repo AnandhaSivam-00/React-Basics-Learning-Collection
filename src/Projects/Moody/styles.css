@@ -133,7 +133,7 @@ input[type=number]::-webkit-outer-spin-button {
     transition: ease-in-out 0.1s smooth;
 }
 
-.ant-btn-default {
+/* .ant-btn-default {
     border: 2px solid black !important;
     background-color: #ffe6be !important;
 }
@@ -141,7 +141,7 @@ input[type=number]::-webkit-outer-spin-button {
 .ant-btn-default:hover {
     background-color: black !important;
     color: white !important;
-}
+} */
 
 .delete-confirmation-modal .ant-modal-content,
 .post-confirmation-modal .ant-modal-content {

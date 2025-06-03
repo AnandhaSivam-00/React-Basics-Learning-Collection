@@ -1,0 +1,10 @@
+#root {
+  margin: 0 auto;
+  text-align: center;
+  background-color: #242424;
+}
+
+.product-container {
+  width: 100px !important;
+  height: auto;
+}
