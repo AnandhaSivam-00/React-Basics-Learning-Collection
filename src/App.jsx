@@ -243,7 +243,7 @@ const App = () => {
     ))
 
     return (
-        <AnimatePresence mode='wait' exitBeforeEnter>
+        <AnimatePresence mode='wait'>
             <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
                 <RouterProvider router={router} />
             </Suspense>

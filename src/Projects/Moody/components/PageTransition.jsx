@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion' 
 
 const PageTransition = ({ children }) => {
-  const pageVariansts = {
+  const pageVariants = {
     pageIn: {
       opacity: 1,
       y: 0,
