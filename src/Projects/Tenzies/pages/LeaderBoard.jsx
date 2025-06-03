@@ -6,6 +6,8 @@ import { ConfigProvider, Tabs } from 'antd';
 import LeaderTable from '../components/leaderboard components/LeaderTable';
 import UserLogsTable from '../components/leaderboard components/UserLogsTable';
 
+import { clearAuthError } from '../redux/features/authSlice';
+
 import '../index.css'
 
 const LeaderBoard = () => {
