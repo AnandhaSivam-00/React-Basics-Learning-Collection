@@ -23,7 +23,7 @@ const PageTransition = ({ children }) => {
 
   return (
     <motion.div
-      variants={pageVariansts}
+      variants={pageVariants}
       initial={{
         opacity: 0,
         y: -20
