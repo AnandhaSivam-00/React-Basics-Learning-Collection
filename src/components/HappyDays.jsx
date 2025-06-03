@@ -53,6 +53,9 @@ const HappyDays = () => {
             <Link to="/vanslife">
                 <button className="btn btn-primary">VansLife</button>
             </Link>
+            <Link to="/moody/login">
+                <button className="btn btn-primary ms-3">Moody</button>
+            </Link>
         </div>
     </div>
   )

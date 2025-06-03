@@ -53,12 +53,30 @@ div #root {
 }
 
 .die-roll-btn {
-    background-color: rgb(136, 44, 222) !important;
+    background-color: #882cde !important;
     color: white !important;
     font-size: 1.3rem !important;
     font-weight: bold !important;
 
     &:hover {
         background-color: rebeccapurple !important;
+    }
+}
+
+.tenzies-login-form-item {
+    margin-bottom: 2.3rem;
+    min-width: 23rem !important;
+}
+
+.tenzies-features-bar {
+    width: 100%;
+    height: auto;
+}
+
+.tenzies-back-btn {
+    color: #0B2434;
+
+    &:hover {
+        color: #882cde;
     }
 }

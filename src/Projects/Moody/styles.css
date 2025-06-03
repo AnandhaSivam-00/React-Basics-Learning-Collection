@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
+@import 'tailwindcss';
+
+.moody-login-container {
+    width: 100wh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff6e8;
+}
+
+.moody-main-container {
+    width: 100wh;
+    height: max-content;
+    background-color: #fff6e8;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+}
+
+.fixing-top {
+    position: fixed;
+    top: 0;
+    z-index: 1 !important;
+}
+
+.nav-background-color {
+    background-color: #ffe6be94;
+    backdrop-filter: blur(5px) !important;
+}
+
+@media screen and (max-width: 590px) {
+    #nav-bar-username {
+        display: none;
+    }
+}
+
+.moody-login-title, h1, .animaiton-text {
+    font-size: 40px;
+    font-weight: 400;
+    font-family: 'Calistoga', sans-serif;
+}
+
+.google-login-btn {
+    width: 100%;
+    height: 60px;
+    background-color: white !important;
+    box-shadow: 3px 3px 3px 1px rgba(0, 0, 0, 0.25) !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    
+    &:hover {
+        background-color: white !important;
+        box-shadow: none !important;
+        transition: ease-in-out 0.5s;
+    }
+}
+
+.box-border {
+    border: black 3px solid !important;
+    height: 60px;
+}
+
+.moody-primary-btn {
+    width: 100%;
+    background-color: #FFDE00 !important;
+    box-shadow: 0px 5px 0px 0px rgb(0, 0, 0);
+    /* position: relative; */
+    
+    &:hover {
+        top: 5px;
+        box-shadow: none;
+        transition: ease-in-out 0.1s smooth;
+    }
+}
+
+.moody-secondary-btn {
+    height: 45px;
+    
+    &:hover {
+        background-color: black !important;
+        color: white !important;
+    }
+}
+
+.nav-btn-hover {
+    &:hover {
+        background-color: #ffdd0051 !important;
+        color: black !important;
+    }
+}
+
+.nav-active {
+    border: 1px solid black !important;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.delete-confirmation-modal .ant-btn-primary {
+    background-color: white;
+    color: rgb(255, 66, 32);
+    border-color: rgb(255, 66, 32);
+    box-shadow: 0px 3px 0px 0px rgb(255, 66, 32) !important;
+    border-width: 2px !important;
+    position: relative;
+}
+
+.post-confirmation-modal .ant-btn-primary {
+    background-color: #FFDE00 !important;
+    box-shadow: 0px 2px 0px 0px rgb(0, 0, 0);
+    position: relative;
+    color: black !important;
+    border: 2px solid black !important;
+    
+    &:hover {
+        top: 2px;
+        box-shadow: none;
+        transition: ease-in-out 0.1s smooth;
+    }
+}
+
+.delete-confirmation-modal .ant-btn-primary:hover {
+    background-color: rgb(255, 66, 32) !important;
+    box-shadow: none !important;
+    transition: ease-in-out 0.1s smooth;
+}
+
+/* .ant-btn-default {
+    border: 2px solid black !important;
+    background-color: #ffe6be !important;
+}
+
+.ant-btn-default:hover {
+    background-color: black !important;
+    color: white !important;
+} */
+
+.delete-confirmation-modal .ant-modal-content,
+.post-confirmation-modal .ant-modal-content {
+    background-color: #ffe6be;
+    border: 3px solid black;
+}
+
+.ant-modal-mask {
+    backdrop-filter: blur(5px) !important;
+}
+
+.mood-icon {
+    width: 45px;
+    height: 45px;
+}
+
+.mood-text {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.mood-reaction-btn {
+    transition: all 0.2s ease-in-out;
+    border: none !important;
+
+    &:hover {
+        transform: scale(1.15);
+        transition: all 0.2s ease-in-out;
+    }
+
+    &:focus {
+        transform: scale(1.15);
+        transition: all 0.2s ease-in-out;
+    }
+}
+
+.mood-reaction-btn-disabled {
+    opacity: 0.5;
+}
+
+.moody-filter-btn {
+    height: 40px;
+    width: 89px;
+    font-size: smaller !important;
+}
+
+.moody-postlist-section {
+    max-height: calc(100vh - 170px);
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
+    z-index: 0 !important;
+}
+
+.moody-postlist-section::-webkit-scrollbar {
+    display: block;
+    width: 8px;
+    margin-left: 10px;
+}
+
+.moody-postlist-section::-webkit-scrollbar-track {
+    background: #fff6e8;
+    width: 10px;
+}
+
+.moody-postlist-section::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(to bottom, #ffdd00, #ffee838c);
+    border-radius: 5px;
+    backdrop-filter: blur(10px);
+}
+
+.moody-post-card {
+    background-color: #ffe6be !important;
+    min-width: 250px !important;
+}
+
+.moody-loading-text-style {
+    font-size: larger;
+    font-weight: 400;
+    font-family: 'Calistoga', sans-serif;
+}
