@@ -1,4 +1,4 @@
-# React Basics Learning Collection
+# React Learning Collection
 
 A comprehensive, project-based learning repository that documents a progressive journey through React fundamentals to advanced concepts. Built with **React 18**, **Vite**, and a modern tooling stack, this collection spans seven full-scale projects, dedicated learning modules, and supporting exercises — each designed to reinforce specific aspects of the React ecosystem.
 
