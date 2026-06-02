@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_GEMINI_MODEL_AP
 
 export async function getRandomWordFromAI() {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
 
         const response = await model.generateContent({ 
             contents: [{
