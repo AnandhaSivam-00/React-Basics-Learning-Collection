@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { ConfigProvider, Tabs } from 'antd';
 
-import LeaderTable from '../components/leaderboard components/LeaderTable';
-import UserLogsTable from '../components/leaderboard components/UserLogsTable';
+import LeaderTable from '../components/leaderboard/LeaderTable';
+import UserLogsTable from '../components/leaderboard/UserLogsTable';
 
 import { clearAuthError } from '../redux/features/authSlice';
 

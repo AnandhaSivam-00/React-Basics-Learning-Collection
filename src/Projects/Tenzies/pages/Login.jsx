@@ -56,7 +56,7 @@ const LoginComponent = () => {
   };
 
   return (
-    <div className='container-fluid mx-auto d-flex flex-column justify-content-center align-items-center tenzies-login'>
+    <div className='container-fluid mx-auto d-flex flex-column justify-content-center align-items-center tenzies-login vh-100'>
       { contextHolder }
       <h1 className='mb-5 heading'>TENZIES</h1>
       <ConfigProvider
