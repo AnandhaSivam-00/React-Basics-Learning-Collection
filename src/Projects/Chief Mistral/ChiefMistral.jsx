@@ -139,7 +139,9 @@ const MistralRecipe = (props) => {
         <>
             <section className='p-3' aria-live='polite'>
                 <h3>Mistral Recipe Recommentations</h3>
-                <ReactMarkdown className='recipe-container'>{props.recipeIdea}</ReactMarkdown>
+                <div className='recipe-container'>
+                    <ReactMarkdown>{props.recipeIdea}</ReactMarkdown>
+                </div>
             </section>
         </>
     )

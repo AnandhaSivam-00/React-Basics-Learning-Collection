@@ -24,8 +24,7 @@ createServer({
         // tell Mirage to let these requests through
         this.passthrough((request) => {
             // Check if the request is going to Hugging Face
-            return request.url.includes("api-inference.huggingface.co") || 
-                   request.url.includes("huggingface.co") ||
+            return request.url.includes("huggingface.co") || 
                    request.url.includes("hf.space") ||
                    request.url.includes("firebase") || 
                    request.url.includes("googleapis.com")
@@ -41,6 +40,7 @@ createServer({
         this.passthrough("https://firestore.googleapis.com/**")
         this.passthrough('https://generativelanguage.googleapis.com/**');
         this.passthrough('https://api.cloudinary.com/**');
+        this.passthrough("https://router.huggingface.co/**");
         
         // Disable namespace for external API calls
         this.urlPrefix = ""
