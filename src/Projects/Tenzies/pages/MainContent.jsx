@@ -135,18 +135,18 @@ const MainContentComponent = () => {
             }
 
             // Set up the timeout only when isGameWon is true
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 setShowModal(true);
                 console.log('Game Won!');
             }, 4000);
+
+            return () => {
+                if(timeoutId) clearTimeout(timeoutId);
+            };
         }
         else {
             setShowModal(false);
         }
-        // return () => {
-        //     // Clear the timeout when the effect is cleaned up
-        //     if(timeoutId) clearTimeout(timeoutId);
-        // };
     }, [isGameWon, dispatch, credential])
 
     const rollDice = () => {
