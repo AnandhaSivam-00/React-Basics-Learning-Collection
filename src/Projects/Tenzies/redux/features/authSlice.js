@@ -16,7 +16,7 @@ const initialState = {
     loading: false,
     isAuthenticated: false,
     credential: null,
-    error: false
+    error: null
 }
 
 export const requireAuthUser = createAsyncThunk(
@@ -217,7 +217,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         clearAuthError: (state) => {
-            state.error = false;
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
@@ -240,6 +240,7 @@ const authSlice = createSlice({
             .addCase(registerUserAction.fulfilled, (state, action) => {
                 state.loading = false;
                 state.credential = action.payload;
+                state.error = null;
             })
             .addCase(registerUserAction.rejected, (state, action) => {
                 state.loging = false;
@@ -252,6 +253,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.credential = action.payload;
+                state.error = null;
             })
             .addCase(requireAuthUser.rejected, (state, action) => {
                 state.loading = false;
@@ -268,7 +270,7 @@ const authSlice = createSlice({
                 state.credential = {
                     logout: true
                 };
-                state.error = false;
+                state.error = null;
             })
             .addCase(logoutUserAction.rejected, (state, action) => {
                 state.loading = false;

@@ -11,6 +11,7 @@ import {
   notification
 } from 'antd';
 
+import AgreementModal from '../components/AgreementModal';
 import store from '../redux/app/store';
 import { clearAuthError, registerUserAction } from '../redux/features/authSlice';
 
@@ -48,6 +49,9 @@ const SignUpComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [userAgree, setUserAgree] = useState(false);
+
   useEffect(() => {
     dispatch(clearAuthError());
   }, [dispatch]);
@@ -68,12 +72,12 @@ const SignUpComponent = () => {
       navigate('/tenzies-game');
     }
 
-    if(error) {
-        api.error({
-          placement: 'bottomRight',
-          message: 'Sign Up Failed',
-          description: error,
-        });
+    if (error && typeof error === 'string') {
+      api.error({
+        placement: 'bottomRight',
+        message: 'Sign Up Failed',
+        description: error,
+      });
     }
   }, [isAuthenticated, error, credential]);
 
@@ -223,9 +227,12 @@ const SignUpComponent = () => {
             ]}
             {...tailFormItemLayout}
           >
-            <Checkbox>
-              I have read the <a href="">agreement</a>
-            </Checkbox>
+            <div className='d-flex justify-content-start align-items-start'>
+              <Checkbox disabled={!userAgree}>
+                I have read the
+              </Checkbox>
+              <a href='#' onClick={(e) => { e.preventDefault(); setOpen(true); }}>agreement</a>
+            </div>
           </Form.Item>
           <Form.Item className='text-center'>
             <Button type="primary" htmlType="submit" style={{ width: '10rem' }} loading={loading}>
@@ -235,6 +242,12 @@ const SignUpComponent = () => {
         </Form>
         </ConfigProvider>
       </div>
+      
+      <AgreementModal 
+        open={open}
+        setOpen={setOpen}
+        setUserAgree={setUserAgree}
+      />
     </div>
   )
 }
