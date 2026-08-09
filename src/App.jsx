@@ -101,6 +101,11 @@ const App = () => {
                     // loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
+                    path='reset-password' 
+                    element={<Tenzies.ForgotPassword />}
+                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                />
+                <Route 
                     path='sign-up' 
                     element={<Tenzies.SignUp />}
                     // loader={async ({request}) => dispatch(requireAuthUser(request))} 

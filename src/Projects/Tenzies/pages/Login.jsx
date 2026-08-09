@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { 
   Button, 
@@ -14,13 +14,13 @@ import {
 } from 'antd';
 
 import store from '../redux/app/store';
-import { loginUserAction, clearAuthError } from '../redux/features/authSlice';
+import { loginUserAction, clearAuthError, signInUpGoogleAction } from '../redux/features/authSlice';
 
 import { LoginUserIcon, PasswordIcon, EmailIcon, GoogleIcon } from '../assets/Icons/Icons';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import '../index.css'
 
-const LoginComponent = () => {
+const Login = () => {
   const {loading, isAuthenticated, error} = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -43,7 +43,7 @@ const LoginComponent = () => {
     if(error && typeof error === 'string') {
       api.error({
         placement: 'bottomRight',
-        message: 'Login Failed',
+        title: 'Login Failed',
         description: error,
       });
     }
@@ -54,6 +54,12 @@ const LoginComponent = () => {
     dispatch(clearAuthError());
     dispatch(loginUserAction(values));
   };
+
+  const handleGoogleAuth = () => {
+    dispatch(clearAuthError());
+    console.log("Yes Sign-in with google Clicked")
+    dispatch(signInUpGoogleAction());
+  }
 
   return (
     <div className='container-fluid mx-auto d-flex flex-column justify-content-center align-items-center tenzies-login vh-100'>
@@ -121,13 +127,14 @@ const LoginComponent = () => {
                   Show the password
                 </Checkbox>
               </Form.Item>
-              <a href="">Forgot password</a>
+              {/* <a href="">Forgot password</a> */}
+              <Link to='/tenzies-game/reset-password'>Forgot password</Link>
             </Flex>
           </Form.Item>
 
           {searchParams.get('message') && (
             <Alert
-              message={searchParams.get('message')}
+              title={searchParams.get('message')}
               type="warning"
               showIcon
               className='mb-4'
@@ -163,21 +170,13 @@ const LoginComponent = () => {
             color="default" 
             variant="outlined"
             style={{ padding: '1.1rem' }}
-            onClick={() => console.log('Sign Up clicked')}
+            onClick={handleGoogleAuth}
           >
             <GoogleIcon width={20} height={20} /> Sign up or log in with Google
           </Button>
         </div>
       </ConfigProvider>
     </div>
-  )
-}
-
-const Login = () => {
-  return (
-    <Provider store={store}>
-      <LoginComponent />
-    </Provider>
   )
 }
 

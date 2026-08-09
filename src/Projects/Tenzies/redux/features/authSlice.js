@@ -7,6 +7,9 @@ import {
     setPersistence, 
     browserLocalPersistence,
     browserSessionPersistence,
+    sendPasswordResetEmail,
+    signInWithPopup,
+    GoogleAuthProvider,
 } from 'firebase/auth';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
@@ -90,34 +93,32 @@ export const loginUserAction = createAsyncThunk(
         }
         catch(error) {
             console.error('Error logging in user:', error);
-            const errorCode = error.code;
-            let errorMessage;
+            const errorMessage = authErrorMessageGenerator(error.code);
 
-            switch (errorCode) {
-                case 'auth/invalid-email':
-                    errorMessage = 'Invalid email format.';
-                    break;
-                case 'auth/user-disabled':
-                    errorMessage = 'This account has been disabled.';
-                    break;
-                case 'auth/user-not-found':
-                    errorMessage = 'No account found with this email.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMessage = 'Incorrect password.';
-                    break;
-                case 'auth/too-many-requests':
-                    errorMessage = 'Too many failed login attempts. Try again later.';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Network error. Check your connection.';
-                    break;
-                case 'auth/invalid-credential':
-                    errorMessage = 'Invalid credentials provided.';
-                    break;
-                default:
-                    errorMessage = 'Login failed. Please try again.';
+            return rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const signInUpGoogleAction = createAsyncThunk(
+    'user-auth/signInUpGoogleAction',
+    async (_, { rejectWithValue }) => {
+        // Try to login with Google Sign-in method
+        try {
+            await setPersistence(auth, browserSessionPersistence);
+
+            const response = await signInWithPopup(auth, new GoogleAuthProvider());
+
+            return {
+                uid: response.user.uid,
+                email: response.user.email,
+                displayName: response.user.displayName,
+                accessToken: response.user.accessToken
             }
+        }
+        catch(error) {
+            console.error('Error login/signup user:', error);
+            const errorMessage = authErrorMessageGenerator(error.code);
 
             return rejectWithValue(errorMessage);
         }
@@ -212,6 +213,24 @@ export const registerUserAction = createAsyncThunk(
     }
 )
 
+export const forgotPasswordAction = createAsyncThunk(
+    'user-auth/forgotPasswordAction',
+    async ({ email }, { rejectWithValue }) => {
+        try {
+            const response = await sendPasswordResetEmail(auth, email);
+
+            return {
+                message: 'Password reset email sended!'
+            }
+        }
+        catch(error) {
+            console.error('Error occurred while submitting the request for forgot password', error);
+
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
 const authSlice = createSlice({
     name: 'user-auth',
     initialState,
@@ -231,6 +250,18 @@ const authSlice = createSlice({
                 state.credential = action.payload;
             })
             .addCase(loginUserAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(signInUpGoogleAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(signInUpGoogleAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.credential = action.payload;
+            })
+            .addCase(signInUpGoogleAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
@@ -275,7 +306,23 @@ const authSlice = createSlice({
             .addCase(logoutUserAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+            .addCase(forgotPasswordAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(forgotPasswordAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.credential = {
+                    logout: true,
+                    message: action.payload.message
+                }
+                state.error = null;
+            })
+            .addCase(forgotPasswordAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     }
 })
 
