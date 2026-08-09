@@ -28,7 +28,24 @@ export const fetchUserPersonalData = createAsyncThunk(
                 }
             } 
             else {
-                throw new Error('No personal data document found');
+                const defaultUserData = {
+                    user_id: userId,
+                    name: '',
+                    user_name: '',
+                    phone_number: 0,
+                    email: '',
+                    gender: '',
+                    about_me: '',
+                    isAgreeAgreements: true,
+                    created_at: serverTimestamp(),
+                    updated_at: serverTimestamp(),
+                };
+                await setDoc(userRef, defaultUserData);
+                return {
+                    ...defaultUserData,
+                    created_at: formatCurrentDateTime(),
+                    updated_at: formatCurrentDateTime(),
+                };
             }
         } 
         catch(error) {
@@ -54,7 +71,14 @@ export const fetchUserSettingData = createAsyncThunk(
                 }
             }
             else {
-                throw new Error('No setting data document found');
+                const defaultSettings = {
+                    trail_mode: false,
+                    dark_mode: false,
+                    show_on_lb: true,
+                    send_emails: false,
+                };
+                await setDoc(settingsRef, defaultSettings);
+                return defaultSettings;
             }
         }
         catch(error) {

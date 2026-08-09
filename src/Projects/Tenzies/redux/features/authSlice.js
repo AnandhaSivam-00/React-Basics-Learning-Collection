@@ -11,9 +11,10 @@ import {
     signInWithPopup,
     GoogleAuthProvider,
 } from 'firebase/auth';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
 import { formatFirebaseTimestamp } from '../../utils/DateTimeFormatting';
+import { authErrorMessageGenerator } from '../../utils/customErrorMessage';
 
 const initialState = {
     loading: false,
@@ -108,6 +109,61 @@ export const signInUpGoogleAction = createAsyncThunk(
             await setPersistence(auth, browserSessionPersistence);
 
             const response = await signInWithPopup(auth, new GoogleAuthProvider());
+            const uid = response.user.uid;
+
+            // Check and initialize user personal data in Firestore if missing
+            const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    user_id: uid,
+                    name: response.user.displayName || '',
+                    user_name: '',
+                    phone_number: 0,
+                    email: response.user.email || '',
+                    gender: '',
+                    about_me: '',
+                    isAgreeAgreements: true,
+                    created_at: serverTimestamp(),
+                    updated_at: serverTimestamp(),
+                });
+            }
+
+            // Check and initialize user settings in Firestore if missing
+            const userSettingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'settings-data');
+            const settingsSnap = await getDoc(userSettingsRef);
+
+            if (!settingsSnap.exists()) {
+                await setDoc(userSettingsRef, {
+                    trail_mode: false,
+                    dark_mode: false,
+                    show_on_lb: true,
+                    send_emails: false,
+                });
+            }
+
+            // Check and initialize user game history in Firestore if missing
+            const userGHSRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'game-history');
+            const ghsSnap = await getDoc(userGHSRef);
+
+            if (!ghsSnap.exists()) {
+                await setDoc(userGHSRef, {
+                    total_attempts: 0,
+                    lb_rank: 'N/A',
+                    highest_clicks: 0,
+                    lowest_clicks: 0,
+                    fastest_finish: '00:00:00',
+                    latest_attempt_at: 'N/A'
+                });
+            }
+
+            console.log({
+                uid: response.user.uid,
+                email: response.user.email,
+                displayName: response.user.displayName,
+                accessToken: response.user.accessToken
+            });
 
             return {
                 uid: response.user.uid,

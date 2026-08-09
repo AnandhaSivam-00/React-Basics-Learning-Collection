@@ -46,8 +46,9 @@ const Login = () => {
         title: 'Login Failed',
         description: error,
       });
+      dispatch(clearAuthError());
     }
-  }, [isAuthenticated, error]);
+  }, [isAuthenticated, error, dispatch, navigate, searchParams, api]);
 
   const onFinish = (values) => {
     // Clearing the errors before the another dispatch to avoid the miss match of error messages

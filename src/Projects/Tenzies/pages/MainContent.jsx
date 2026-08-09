@@ -39,8 +39,8 @@ const MainContent = () => {
     }
 
     const { credential, isAuthenticated, error } = useSelector((state) => state.auth);
-    const { settingsData } = useSelector((state) => state.user);
-    const { loading, error:logerror } = useSelector((state) => state.userlog);
+    const { settingsData, error: userError } = useSelector((state) => state.user);
+    const { loading, error: logerror } = useSelector((state) => state.userlog);
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -69,22 +69,23 @@ const MainContent = () => {
             dispatch(clearAuthError());
         }
 
-        if(logerror) {
+        const activeError = userError || logerror;
+        if(activeError) {
             api.error({
                 placement: 'bottomRight',
                 title: 'Error occurred while fetching data',
-                description: error,
-            })
+                description: typeof activeError === 'string' ? activeError : 'An error occurred while fetching user data.',
+            });
 
             dispatch(clearUserError());
             dispatch(clearUserLogError());
         }
 
-        if (isAuthenticated && credential && !settingsData.length) {
+        if (isAuthenticated && credential && (!settingsData || !Object.keys(settingsData).length) && !userError) {
             dispatch(fetchUserSettingData(credential.uid || credential.user_id));
         }
 
-    }, [credential, isAuthenticated, dispatch]);
+    }, [credential, isAuthenticated, userError, logerror, error, dispatch, navigate, api, settingsData]);
 
     // Check every time the game is finished or not when the changes happened
     const isGameWon = diceNumbers.every(die => die.value === diceNumbers[0].value) &&
