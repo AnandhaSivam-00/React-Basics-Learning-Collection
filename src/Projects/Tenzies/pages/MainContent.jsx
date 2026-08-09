@@ -19,7 +19,7 @@ import { addUserLog, updateUserLogStatistics, fetchUserGameHistory, clearUserLog
 import { clearAuthError } from '../redux/features/authSlice';
 // import Timer from './components/Timer';
 
-const MainContentComponent = () => {
+const MainContent = () => {
     const generateNewDice = () => {
         // const numArray = [];
         // for(let i=0; i<10; i++) {
@@ -72,7 +72,7 @@ const MainContentComponent = () => {
         if(logerror) {
             api.error({
                 placement: 'bottomRight',
-                message: 'Error occurred while fetching data',
+                title: 'Error occurred while fetching data',
                 description: error,
             })
 
@@ -258,14 +258,6 @@ const MainContentComponent = () => {
             {contextHolder}
             {messageContextHolder}
         </>
-    )
-}
-
-const MainContent = () => {
-    return (
-        <Provider store={store}>
-            <MainContentComponent />
-        </Provider>
     )
 }
 

@@ -42,7 +42,7 @@ const tailFormItemLayout = {
   },
 };
 
-const SignUpComponent = () => {
+const SignUp = () => {
   const [api, contextHolder] = notification.useNotification();
 
   const { loading, isAuthenticated, credential, error } = useSelector((state) => state.auth);
@@ -60,7 +60,7 @@ const SignUpComponent = () => {
     if(!isAuthenticated && credential) {
       api.success({
         placement: 'bottomRight',
-        message: 'Sign Up Successful',
+        title: 'Sign Up Successful',
         description: 'Now you redirected to Login page!',
       });
 
@@ -75,7 +75,7 @@ const SignUpComponent = () => {
     if (error && typeof error === 'string') {
       api.error({
         placement: 'bottomRight',
-        message: 'Sign Up Failed',
+        title: 'Sign Up Failed',
         description: error,
       });
     }
@@ -249,15 +249,6 @@ const SignUpComponent = () => {
         setUserAgree={setUserAgree}
       />
     </div>
-  )
-}
-
-
-const SignUp = () => {
-  return (
-    <Provider store={store}>
-      <SignUpComponent />
-    </Provider>
   )
 }
 
