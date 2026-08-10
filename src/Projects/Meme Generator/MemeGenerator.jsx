@@ -10,8 +10,10 @@ const MemeGenerator = () => {
     <>
         <Header />
         <MainContentProvider>
-          <InputForm />
-          <OutputContainer />
+          <main className='w-100 vh-100 container-fluid d-flex flex-column flex-lg-row'>
+            <InputForm />
+            <OutputContainer />
+          </main>
         </MainContentProvider>
         <Footer />
     </>

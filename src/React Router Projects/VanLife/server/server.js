@@ -41,6 +41,7 @@ createServer({
         this.passthrough('https://generativelanguage.googleapis.com/**');
         this.passthrough('https://api.cloudinary.com/**');
         this.passthrough("https://router.huggingface.co/**");
+        this.passthrough("https://api.imgflip.com/**")
         
         // Disable namespace for external API calls
         this.urlPrefix = ""
