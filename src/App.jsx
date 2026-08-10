@@ -101,6 +101,11 @@ const App = () => {
                     // loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
+                    path='reset-password' 
+                    element={<Tenzies.ForgotPassword />}
+                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                />
+                <Route 
                     path='sign-up' 
                     element={<Tenzies.SignUp />}
                     // loader={async ({request}) => dispatch(requireAuthUser(request))} 
@@ -238,13 +243,31 @@ const App = () => {
                     />
                 </Route>
             </Route>
-            <Route path='*' element={<h1>404 - Not Found</h1>} />
+            <Route path='*' element={
+                <div 
+                    className="container-fluid d-flex justify-content-center align-items-center"
+                    style={{
+                        minHeight: '100vh'
+                    }}
+                >
+                    <h1>404 - Page Not Found</h1>
+                </div>
+            } />
         </>
     ))
 
     return (
         <AnimatePresence mode='wait'>
-            <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
+            <Suspense fallback={
+                <div 
+                    className="container-fluid d-flex justify-content-center align-items-center"
+                    style={{
+                        minHeight: '100vh'
+                    }}
+                >
+                    <h1>Loading...</h1>
+                </div>
+            }>
                 <RouterProvider router={router} />
             </Suspense>
         </AnimatePresence>

@@ -7,16 +7,20 @@ import {
     setPersistence, 
     browserLocalPersistence,
     browserSessionPersistence,
+    sendPasswordResetEmail,
+    signInWithPopup,
+    GoogleAuthProvider,
 } from 'firebase/auth';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
 import { formatFirebaseTimestamp } from '../../utils/DateTimeFormatting';
+import { authErrorMessageGenerator } from '../../utils/customErrorMessage';
 
 const initialState = {
     loading: false,
     isAuthenticated: false,
     credential: null,
-    error: false
+    error: null
 }
 
 export const requireAuthUser = createAsyncThunk(
@@ -90,34 +94,87 @@ export const loginUserAction = createAsyncThunk(
         }
         catch(error) {
             console.error('Error logging in user:', error);
-            const errorCode = error.code;
-            let errorMessage;
+            const errorMessage = authErrorMessageGenerator(error.code);
 
-            switch (errorCode) {
-                case 'auth/invalid-email':
-                    errorMessage = 'Invalid email format.';
-                    break;
-                case 'auth/user-disabled':
-                    errorMessage = 'This account has been disabled.';
-                    break;
-                case 'auth/user-not-found':
-                    errorMessage = 'No account found with this email.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMessage = 'Incorrect password.';
-                    break;
-                case 'auth/too-many-requests':
-                    errorMessage = 'Too many failed login attempts. Try again later.';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Network error. Check your connection.';
-                    break;
-                case 'auth/invalid-credential':
-                    errorMessage = 'Invalid credentials provided.';
-                    break;
-                default:
-                    errorMessage = 'Login failed. Please try again.';
+            return rejectWithValue(errorMessage);
+        }
+    }
+)
+
+export const signInUpGoogleAction = createAsyncThunk(
+    'user-auth/signInUpGoogleAction',
+    async (_, { rejectWithValue }) => {
+        // Try to login with Google Sign-in method
+        try {
+            await setPersistence(auth, browserSessionPersistence);
+
+            const response = await signInWithPopup(auth, new GoogleAuthProvider());
+            const uid = response.user.uid;
+
+            // Check and initialize user personal data in Firestore if missing
+            const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    user_id: uid,
+                    name: response.user.displayName || '',
+                    user_name: '',
+                    phone_number: 0,
+                    email: response.user.email || '',
+                    gender: '',
+                    about_me: '',
+                    isAgreeAgreements: true,
+                    created_at: serverTimestamp(),
+                    updated_at: serverTimestamp(),
+                });
             }
+
+            // Check and initialize user settings in Firestore if missing
+            const userSettingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'settings-data');
+            const settingsSnap = await getDoc(userSettingsRef);
+
+            if (!settingsSnap.exists()) {
+                await setDoc(userSettingsRef, {
+                    trail_mode: false,
+                    dark_mode: false,
+                    show_on_lb: true,
+                    send_emails: false,
+                });
+            }
+
+            // Check and initialize user game history in Firestore if missing
+            const userGHSRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'game-history');
+            const ghsSnap = await getDoc(userGHSRef);
+
+            if (!ghsSnap.exists()) {
+                await setDoc(userGHSRef, {
+                    total_attempts: 0,
+                    lb_rank: 'N/A',
+                    highest_clicks: 0,
+                    lowest_clicks: 0,
+                    fastest_finish: '00:00:00',
+                    latest_attempt_at: 'N/A'
+                });
+            }
+
+            console.log({
+                uid: response.user.uid,
+                email: response.user.email,
+                displayName: response.user.displayName,
+                accessToken: response.user.accessToken
+            });
+
+            return {
+                uid: response.user.uid,
+                email: response.user.email,
+                displayName: response.user.displayName,
+                accessToken: response.user.accessToken
+            }
+        }
+        catch(error) {
+            console.error('Error login/signup user:', error);
+            const errorMessage = authErrorMessageGenerator(error.code);
 
             return rejectWithValue(errorMessage);
         }
@@ -212,12 +269,30 @@ export const registerUserAction = createAsyncThunk(
     }
 )
 
+export const forgotPasswordAction = createAsyncThunk(
+    'user-auth/forgotPasswordAction',
+    async ({ email }, { rejectWithValue }) => {
+        try {
+            const response = await sendPasswordResetEmail(auth, email);
+
+            return {
+                message: 'Password reset email sended!'
+            }
+        }
+        catch(error) {
+            console.error('Error occurred while submitting the request for forgot password', error);
+
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
 const authSlice = createSlice({
     name: 'user-auth',
     initialState,
     reducers: {
         clearAuthError: (state) => {
-            state.error = false;
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
@@ -234,12 +309,25 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(signInUpGoogleAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(signInUpGoogleAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.credential = action.payload;
+            })
+            .addCase(signInUpGoogleAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
             .addCase(registerUserAction.pending, (state) => {
                 state.loading = true;
             })
             .addCase(registerUserAction.fulfilled, (state, action) => {
                 state.loading = false;
                 state.credential = action.payload;
+                state.error = null;
             })
             .addCase(registerUserAction.rejected, (state, action) => {
                 state.loging = false;
@@ -252,6 +340,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.credential = action.payload;
+                state.error = null;
             })
             .addCase(requireAuthUser.rejected, (state, action) => {
                 state.loading = false;
@@ -268,12 +357,28 @@ const authSlice = createSlice({
                 state.credential = {
                     logout: true
                 };
-                state.error = false;
+                state.error = null;
             })
             .addCase(logoutUserAction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            })
+            .addCase(forgotPasswordAction.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(forgotPasswordAction.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.credential = {
+                    logout: true,
+                    message: action.payload.message
+                }
+                state.error = null;
+            })
+            .addCase(forgotPasswordAction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
     }
 })
 

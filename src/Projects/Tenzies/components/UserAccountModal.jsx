@@ -72,7 +72,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
 
       api.error({
         placement: 'bottomRight',
-        message: 'Failed to fetch the user data',
+        title: 'Failed to fetch the user data',
         description: `Try again by login... This is due to network error ${error}`
       })
     }
@@ -91,7 +91,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
 
         api.success({
           placement: 'bottomRight',
-          message: 'Data saved!',
+          title: 'Data saved!',
           description: `User personal data saved successfully...`
         });
       })
@@ -164,7 +164,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
           open={isUserAccountModalOpen}
           loading={loading || logLoading}
           closable={false}
-          maskClosable={false}
+          mask={{ closable: false }}
           centered
           okText={editMode ? 'Save' : 'Edit'}
           okType='primary'

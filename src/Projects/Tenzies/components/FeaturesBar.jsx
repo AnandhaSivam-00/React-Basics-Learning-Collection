@@ -52,7 +52,7 @@ const FeaturesBar = () => {
         if (credential?.logout) {
             api.success({
                 placement: 'bottomRight',
-                message: 'Logout Successful',
+                title: 'Logout Successful',
                 description: 'You have been logged out successfully. Now you can redirected to the login page.',
             })
             setTimeout(() => {
@@ -63,7 +63,7 @@ const FeaturesBar = () => {
         if(error) {
             api.error({
                 placement: 'bottomRight',
-                message: 'Logout Failed',
+                title: 'Logout Failed',
                 description: error,
                 onClose: () => {
                     dispatch(clearAuthError());

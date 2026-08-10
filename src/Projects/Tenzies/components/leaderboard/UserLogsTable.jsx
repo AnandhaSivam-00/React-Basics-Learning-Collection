@@ -32,14 +32,14 @@ const UserLogsTable = () => {
         if(authError && !credential.length) {
             api.error({
                 placement: 'bottomRight',
-                message: 'Unauthorized Access!',
+                title: 'Unauthorized Access!',
                 description: `No user credential is found... Try again by login \n${error}`
             })
         }
         else if(error) {
             api.error({
                 placement: 'bottomRight',
-                message: 'Failed to fetch the data',
+                title: 'Failed to fetch the data',
                 description: `${error}`
             })
         }
