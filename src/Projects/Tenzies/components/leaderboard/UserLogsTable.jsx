@@ -29,12 +29,13 @@ const UserLogsTable = () => {
     const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
-        if(authError && !credential.length) {
+        if(authError && !credential) {
             api.error({
                 placement: 'bottomRight',
                 title: 'Unauthorized Access!',
-                description: `No user credential is found... Try again by login \n${error}`
+                description: `No user credential is found... Try again by logging in.`
             })
+            dispatch(clearAuthError());
         }
         else if(error) {
             api.error({
@@ -42,15 +43,16 @@ const UserLogsTable = () => {
                 title: 'Failed to fetch the data',
                 description: `${error}`
             })
+            dispatch(clearLeaderboardError());
         }
-        else {
+        else if(credential) {
             dispatch(fetchUserLogChunks({
                 userId: credential?.uid || credential?.user_id,
                 newPage: 1,
                 direction: 'initial',
             }))
         }
-    }, [credential, error, dispatch]);
+    }, [credential, error, authError, dispatch, api]);
 
     const handlePaginationChange = useCallback(async (newPage, direction) => {
         dispatch(clearLeaderboardError());

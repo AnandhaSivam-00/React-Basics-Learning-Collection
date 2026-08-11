@@ -28,6 +28,7 @@ const ForgotPassword = () => {
                 title: 'Reset password email send failed... Try again later...',
                 description: error,
             });
+            dispatch(clearAuthError());
         }
 
         if(credential && credential.message) {
@@ -37,7 +38,7 @@ const ForgotPassword = () => {
                 description: 'Check your respective email inbox or a span folder.',
             });
         }
-    }, [error, credential])
+    }, [error, credential, dispatch, api]);
 
     const onFinish = (values) => {
         dispatch(clearAuthError());

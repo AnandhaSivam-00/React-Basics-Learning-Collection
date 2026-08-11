@@ -75,6 +75,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
         title: 'Failed to fetch the user data',
         description: `Try again by login... This is due to network error ${error}`
       })
+      dispatch(clearUserError());
     }
   }, [isUserAccountModalOpen, credential?.uid, dispatch, error, api, setIsUserAccountModalOpen]);
 

@@ -26,6 +26,7 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
                 title: 'Failed to fetch the user\'s settings data',
                 description: `Try again by login... This is due to network error ${error}`
             });
+            dispatch(clearUserError());
         }
     }, [isSettingsModalOpen, dispatch, credential?.uid, error, api]);
 

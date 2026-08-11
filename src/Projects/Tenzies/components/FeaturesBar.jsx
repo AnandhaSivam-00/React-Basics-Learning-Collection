@@ -60,17 +60,15 @@ const FeaturesBar = () => {
             }, 2000);
         }
 
-        if(error) {
+        if(error && typeof error === 'string') {
             api.error({
                 placement: 'bottomRight',
                 title: 'Logout Failed',
                 description: error,
-                onClose: () => {
-                    dispatch(clearAuthError());
-                }
             });
+            dispatch(clearAuthError());
         }
-    }, [credential, error]);
+    }, [credential, error, dispatch, navigate, api]);
 
     return (
         <>

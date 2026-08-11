@@ -31,6 +31,12 @@ const Login = () => {
   const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
+    if(error && Array.isArray(error)) {
+      dispatch(clearAuthError());
+    }
+  }, [error, dispatch]);
+
+  useEffect(() => {
     if(isAuthenticated) {
       if(searchParams.get('redirectTo')) {
         navigate(searchParams.get('redirectTo'), { replace: true });

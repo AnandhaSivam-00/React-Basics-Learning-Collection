@@ -78,8 +78,9 @@ const SignUp = () => {
         title: 'Sign Up Failed',
         description: error,
       });
+      dispatch(clearAuthError());
     }
-  }, [isAuthenticated, error, credential]);
+  }, [isAuthenticated, error, credential, dispatch, navigate, api]);
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
