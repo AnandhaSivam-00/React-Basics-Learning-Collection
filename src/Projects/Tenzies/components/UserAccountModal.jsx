@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Modal,
@@ -46,17 +46,17 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
   const [messageApi, messageContextHolder] = message.useMessage();
 
   useEffect(() => {
-    if (userData && Object.keys(userData).length > 0) {
+    if(isUserAccountModalOpen && userData && Object.keys(userData).length > 0) {
       form.setFieldsValue({
         email: userData.email || '',
         name: userData.name || '',
-        username: userData.user_name || '',
+        user_name: userData.user_name,
         phone_number: userData.phone_number ? String(userData.phone_number) : '',
         gender: userData.gender || '',
         about_me: userData.about_me || ''
       });
     }
-  }, [userData, form]);
+  }, [isUserAccountModalOpen, userData, form]);
 
   useEffect(() => {
     if(isUserAccountModalOpen && credential?.uid && !userData.length) {
@@ -75,6 +75,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
         title: 'Failed to fetch the user data',
         description: `Try again by login... This is due to network error ${error}`
       })
+      dispatch(clearUserError());
     }
   }, [isUserAccountModalOpen, credential?.uid, dispatch, error, api, setIsUserAccountModalOpen]);
 
@@ -101,14 +102,14 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
   }
 
   const handleCancel = () => {
-    if (editMode) {
+    if(editMode) {
       setEditMode(false);
 
       // Reset form to original values
       form.setFieldsValue({
         email: userData.email || '',
         name: userData.name || '',
-        user_name: userData.user_name || '',
+        username: userData.user_name,
         phone_number: userData.phone_number ? String(userData.phone_number) : '',
         gender: userData.gender || '',
         about_me: userData.about_me || ''
@@ -135,7 +136,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
       email: values.email,
       name: values.name,
       user_name: values.user_name,
-      phone_number: values.phone_number ? String(userData.phone_number) : '',
+      phone_number: values.phone_number ? String(values.phone_number) : '',
       gender: values.gender,
       about_me: values.about_me
     });
@@ -172,7 +173,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
           cancelText='Cancel'
           onCancel={handleCancel}
         >
-          <div className='container-fluid py-1 m-0'>
+          <div className='container-fluid py-1 m-0' style={{ maxHeight: '60vh', overflowY: 'auto' }}>
             <div className='d-flex flex-column justify-content-center align-items-start'>
               <h5 className='mt-2 mb-4'>Personal Details</h5>
               <Form
@@ -210,10 +211,10 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
                 </Form.Item>
 
                 <Form.Item
-                  name="username"
+                  name="user_name"
                   label="Username"
                 >
-                  <Input disabled={!editMode} />
+                  <Input disabled={true} />
                 </Form.Item>
 
                 <Form.Item

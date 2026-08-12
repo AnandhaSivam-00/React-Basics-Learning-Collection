@@ -88,12 +88,12 @@ const App = () => {
             <Route path='/assembly-endgame' element={<MainGamePage />} />
             <Route 
                 path='/tenzies-game' 
-                loader={async ({request}) => dispatch(requireAuthUser(request))}
+                // loader={async ({request}) => dispatch(requireAuthUser(request))}
             >
                 <Route 
                     index 
                     element={<Tenzies.MainContent />}
-                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                    loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
                     path='login' 

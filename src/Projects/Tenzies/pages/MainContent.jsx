@@ -63,9 +63,11 @@ const MainContent = () => {
     const buttonRef = useRef(null);
 
     useEffect(() => {
-        if(!isAuthenticated && error instanceof Array) {
-            navigate(error[1]);
-
+        if(!isAuthenticated) {
+            const redirectUrl = (error instanceof Array && error[1]) 
+                ? error[1] 
+                : '/tenzies-game/login?message=You must login or create an account first!&redirectTo=/tenzies-game';
+            navigate(redirectUrl);
             dispatch(clearAuthError());
         }
 

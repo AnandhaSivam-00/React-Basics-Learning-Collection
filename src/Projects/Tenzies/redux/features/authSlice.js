@@ -6,10 +6,10 @@ import {
     signOut, 
     setPersistence, 
     browserLocalPersistence,
-    browserSessionPersistence,
     sendPasswordResetEmail,
     signInWithPopup,
     GoogleAuthProvider,
+    onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
@@ -30,23 +30,40 @@ export const requireAuthUser = createAsyncThunk(
 
         try {
             // Create a Promise and immediately return its result
-            const user = await new Promise((resolve, reject) => {
-                const unsubscribe = auth.onAuthStateChanged((user) => {
-                    unsubscribe();
-                    if(user) {
-                        resolve(user);
-                    } 
-                    else {
-                        reject(new Error("Not authenticated"));
-                    }
-                });
-            });
+            // const user = await new Promise((resolve, reject) => {
+            //     const unsubscribe = auth.onAuthStateChanged((user) => {
+            //         unsubscribe();
+            //         if(user) {
+            //             resolve(user);
+            //         } 
+            //         else {
+            //             reject(new Error("Not authenticated"));
+            //         }
+            //     });
+            // });
             
-            // If we get here, authentication succeeded
-            return {
-                accessToken: user.accessToken,
-                uid: user.uid,
-            };
+            // // If we get here, authentication succeeded
+            // return {
+            //     accessToken: user.accessToken,
+            //     uid: user.uid,
+            // };
+
+            await auth.authStateReady();
+
+            const user = auth.currentUser;
+
+            if(user) {
+                return {
+                    accessToken: user.accessToken,
+                    uid: user.uid,
+                };
+            } 
+            else {
+                return rejectWithValue([
+                    'Authentication failed. Please login or create an account.',
+                    `/tenzies-game/login?message=You must login or create an account first!&redirectTo=${browserPath}`
+                ]);
+            }
         } 
         catch(error) {
             // Here we handle the rejected promise and call rejectWithValue
@@ -77,7 +94,7 @@ export const loginUserAction = createAsyncThunk(
     'user-auth/loginUserAction',
     async (loginData, { rejectWithValue }) => {
         try {
-            await setPersistence(auth, browserSessionPersistence);
+            await setPersistence(auth, browserLocalPersistence);
 
             const response = await signInWithEmailAndPassword(
                 auth,
@@ -106,7 +123,7 @@ export const signInUpGoogleAction = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         // Try to login with Google Sign-in method
         try {
-            await setPersistence(auth, browserSessionPersistence);
+            await setPersistence(auth, browserLocalPersistence);
 
             const response = await signInWithPopup(auth, new GoogleAuthProvider());
             const uid = response.user.uid;
@@ -115,16 +132,16 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid);
             const userSnap = await getDoc(userRef);
 
-            if (!userSnap.exists()) {
+            if(!userSnap.exists()) {
                 await setDoc(userRef, {
                     user_id: uid,
                     name: response.user.displayName || '',
-                    user_name: '',
+                    user_name: response.user.displayName.toLowerCase().replaceAll(' ', '-'),
                     phone_number: 0,
                     email: response.user.email || '',
                     gender: '',
                     about_me: '',
-                    isAgreeAgreements: true,
+                    is_agree_agreements: true,
                     created_at: serverTimestamp(),
                     updated_at: serverTimestamp(),
                 });
@@ -134,7 +151,7 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userSettingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'settings-data');
             const settingsSnap = await getDoc(userSettingsRef);
 
-            if (!settingsSnap.exists()) {
+            if(!settingsSnap.exists()) {
                 await setDoc(userSettingsRef, {
                     trail_mode: false,
                     dark_mode: false,
@@ -147,7 +164,7 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userGHSRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'game-history');
             const ghsSnap = await getDoc(userGHSRef);
 
-            if (!ghsSnap.exists()) {
+            if(!ghsSnap.exists()) {
                 await setDoc(userGHSRef, {
                     total_attempts: 0,
                     lb_rank: 'N/A',
@@ -157,13 +174,6 @@ export const signInUpGoogleAction = createAsyncThunk(
                     latest_attempt_at: 'N/A'
                 });
             }
-
-            console.log({
-                uid: response.user.uid,
-                email: response.user.email,
-                displayName: response.user.displayName,
-                accessToken: response.user.accessToken
-            });
 
             return {
                 uid: response.user.uid,
@@ -217,7 +227,7 @@ export const registerUserAction = createAsyncThunk(
                 email: userData.email,
                 gender: userData.gender,
                 about_me: userData.about_me || '',
-                isAgreeAgreements: userData.agreement_status,
+                is_agree_agreements: userData.agreement_status,
                 created_at: serverTimestamp(),
                 updated_at: serverTimestamp(),
             });
