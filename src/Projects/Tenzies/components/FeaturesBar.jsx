@@ -26,6 +26,7 @@ const FeaturesBar = () => {
     const navigate = useNavigate();
 
     const [api, contextHolder] = notification.useNotification();
+    const [modal, modalContextHolder] = Modal.useModal();
 
     // Clear errors on component unmount
     useEffect(() => {
@@ -35,7 +36,7 @@ const FeaturesBar = () => {
     }, [dispatch]);
 
     const handleLogout = () => {
-        Modal.confirm({
+        modal.confirm({
             title: 'Are you sure you want to logout?',
             content: 'Progress you made will not be saved.',
             okText: 'Logout',
@@ -73,6 +74,7 @@ const FeaturesBar = () => {
     return (
         <>
             {contextHolder}
+            {modalContextHolder}
             <div className='mb-5 px-4 d-flex flex-row justify-content-end align-items-center gap-x-3 tenzies-features-bar'>
                 <ConfigProvider
                     theme={{

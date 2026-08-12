@@ -12,7 +12,7 @@ div #root {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #0B2434;
+    background-color: #212121;
 }
 
 .tenzies-main {
@@ -21,6 +21,10 @@ div #root {
     width: 100%;
     max-width: 35rem;
     max-height: 35rem;
+}
+
+.leaderboard-container {
+    background-color: #212121;
 }
 
 .tenzies-header .heading {
