@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Modal,
@@ -173,7 +173,7 @@ const UserAccountModal = ({ isUserAccountModalOpen, setIsUserAccountModalOpen })
           cancelText='Cancel'
           onCancel={handleCancel}
         >
-          <div className='container-fluid py-1 m-0'>
+          <div className='container-fluid py-1 m-0' style={{ maxHeight: '60vh', overflowY: 'auto' }}>
             <div className='d-flex flex-column justify-content-center align-items-start'>
               <h5 className='mt-2 mb-4'>Personal Details</h5>
               <Form
