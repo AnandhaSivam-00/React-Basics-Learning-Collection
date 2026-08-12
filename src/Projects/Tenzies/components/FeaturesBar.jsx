@@ -56,9 +56,6 @@ const FeaturesBar = () => {
                 title: 'Logout Successful',
                 description: 'You have been logged out successfully. Now you can redirected to the login page.',
             })
-            setTimeout(() => {
-                navigate('login');
-            }, 2000);
         }
 
         if(error && typeof error === 'string') {
