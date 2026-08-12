@@ -26,6 +26,7 @@ const FeaturesBar = () => {
     const navigate = useNavigate();
 
     const [api, contextHolder] = notification.useNotification();
+    const [modal, modalContextHolder] = Modal.useModal();
 
     // Clear errors on component unmount
     useEffect(() => {
@@ -35,7 +36,7 @@ const FeaturesBar = () => {
     }, [dispatch]);
 
     const handleLogout = () => {
-        Modal.confirm({
+        modal.confirm({
             title: 'Are you sure you want to logout?',
             content: 'Progress you made will not be saved.',
             okText: 'Logout',
@@ -52,29 +53,31 @@ const FeaturesBar = () => {
         if (credential?.logout) {
             api.success({
                 placement: 'bottomRight',
-                message: 'Logout Successful',
+                title: 'Logout Successful',
                 description: 'You have been logged out successfully. Now you can redirected to the login page.',
             })
-            setTimeout(() => {
-                navigate('login');
-            }, 2000);
+
+            const timer = setTimeout(() => {                                                                                                                   
+                navigate('/tenzies-game/login');                                                                                                               
+            }, 1500);                                                                                                                                          
+                                                                                                                                                               
+            return () => clearTimeout(timer);
         }
 
-        if(error) {
+        if(error && typeof error === 'string') {
             api.error({
                 placement: 'bottomRight',
-                message: 'Logout Failed',
+                title: 'Logout Failed',
                 description: error,
-                onClose: () => {
-                    dispatch(clearAuthError());
-                }
             });
+            dispatch(clearAuthError());
         }
-    }, [credential, error]);
+    }, [credential, error, dispatch, navigate, api]);
 
     return (
         <>
             {contextHolder}
+            {modalContextHolder}
             <div className='mb-5 px-4 d-flex flex-row justify-content-end align-items-center gap-x-3 tenzies-features-bar'>
                 <ConfigProvider
                     theme={{
@@ -90,7 +93,7 @@ const FeaturesBar = () => {
                     <Tooltip title='Leaderboard' placement='top'>
                         <Button
                             className='px-2'
-                            href='tenzies-game/leaderboard'
+                            onClick={() => navigate('/tenzies-game/leaderboard')}
                         >
                             <LeaderboardIcon width={20} height={20} />
                         </Button>

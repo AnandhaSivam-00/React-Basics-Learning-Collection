@@ -23,9 +23,10 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
         if(error) {
             api.error({
                 placement: 'bottomRight',
-                message: 'Failed to fetch the user\'s settings data',
+                title: 'Failed to fetch the user\'s settings data',
                 description: `Try again by login... This is due to network error ${error}`
             });
+            dispatch(clearUserError());
         }
     }, [isSettingsModalOpen, dispatch, credential?.uid, error, api]);
 
@@ -47,7 +48,7 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
 
         api.success({
             placement: 'bottomRight',
-            message: 'Data saved!',
+            title: 'Data saved!',
             description: `User settings data saved successfully...`
         })
     }
@@ -75,7 +76,7 @@ const SettingsModal = ({ isSettingsModalOpen, setIsSettingsModalOpen }) => {
                     open={isSettingsModalOpen}
                     loading={loading}
                     closable={false}
-                    maskClosable={false}
+                    mask={{ closable: false }}
                     centered
                     okText='Save'
                     okType='primary'

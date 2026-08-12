@@ -88,16 +88,21 @@ const App = () => {
             <Route path='/assembly-endgame' element={<MainGamePage />} />
             <Route 
                 path='/tenzies-game' 
-                loader={async ({request}) => dispatch(requireAuthUser(request))}
+                // loader={async ({request}) => dispatch(requireAuthUser(request))}
             >
                 <Route 
                     index 
                     element={<Tenzies.MainContent />}
-                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                    loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
                     path='login' 
                     element={<Tenzies.Login />}
+                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                />
+                <Route 
+                    path='reset-password' 
+                    element={<Tenzies.ForgotPassword />}
                     // loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
@@ -238,13 +243,31 @@ const App = () => {
                     />
                 </Route>
             </Route>
-            <Route path='*' element={<h1>404 - Not Found</h1>} />
+            <Route path='*' element={
+                <div 
+                    className="container-fluid d-flex justify-content-center align-items-center"
+                    style={{
+                        minHeight: '100vh'
+                    }}
+                >
+                    <h1>404 - Page Not Found</h1>
+                </div>
+            } />
         </>
     ))
 
     return (
         <AnimatePresence mode='wait'>
-            <Suspense fallback={<h1 className='text-center'>Loading...</h1>}>
+            <Suspense fallback={
+                <div 
+                    className="container-fluid d-flex justify-content-center align-items-center"
+                    style={{
+                        minHeight: '100vh'
+                    }}
+                >
+                    <h1>Loading...</h1>
+                </div>
+            }>
                 <RouterProvider router={router} />
             </Suspense>
         </AnimatePresence>
