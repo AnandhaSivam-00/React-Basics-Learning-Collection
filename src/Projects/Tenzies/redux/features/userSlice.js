@@ -36,7 +36,7 @@ export const fetchUserPersonalData = createAsyncThunk(
                     email: '',
                     gender: '',
                     about_me: '',
-                    isAgreeAgreements: true,
+                    is_agree_agreements: true,
                     created_at: serverTimestamp(),
                     updated_at: serverTimestamp(),
                 };

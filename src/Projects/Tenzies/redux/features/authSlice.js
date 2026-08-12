@@ -115,16 +115,16 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid);
             const userSnap = await getDoc(userRef);
 
-            if (!userSnap.exists()) {
+            if(!userSnap.exists()) {
                 await setDoc(userRef, {
                     user_id: uid,
                     name: response.user.displayName || '',
-                    user_name: '',
+                    user_name: response.user.displayName.toLowerCase().replaceAll(' ', '-'),
                     phone_number: 0,
                     email: response.user.email || '',
                     gender: '',
                     about_me: '',
-                    isAgreeAgreements: true,
+                    is_agree_agreements: true,
                     created_at: serverTimestamp(),
                     updated_at: serverTimestamp(),
                 });
@@ -134,7 +134,7 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userSettingsRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'settings-data');
             const settingsSnap = await getDoc(userSettingsRef);
 
-            if (!settingsSnap.exists()) {
+            if(!settingsSnap.exists()) {
                 await setDoc(userSettingsRef, {
                     trail_mode: false,
                     dark_mode: false,
@@ -147,7 +147,7 @@ export const signInUpGoogleAction = createAsyncThunk(
             const userGHSRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', uid, 'Data', 'game-history');
             const ghsSnap = await getDoc(userGHSRef);
 
-            if (!ghsSnap.exists()) {
+            if(!ghsSnap.exists()) {
                 await setDoc(userGHSRef, {
                     total_attempts: 0,
                     lb_rank: 'N/A',
@@ -157,13 +157,6 @@ export const signInUpGoogleAction = createAsyncThunk(
                     latest_attempt_at: 'N/A'
                 });
             }
-
-            console.log({
-                uid: response.user.uid,
-                email: response.user.email,
-                displayName: response.user.displayName,
-                accessToken: response.user.accessToken
-            });
 
             return {
                 uid: response.user.uid,
@@ -217,7 +210,7 @@ export const registerUserAction = createAsyncThunk(
                 email: userData.email,
                 gender: userData.gender,
                 about_me: userData.about_me || '',
-                isAgreeAgreements: userData.agreement_status,
+                is_agree_agreements: userData.agreement_status,
                 created_at: serverTimestamp(),
                 updated_at: serverTimestamp(),
             });
