@@ -11,7 +11,7 @@ import { clearAuthError } from '../redux/features/authSlice';
 import '../index.css'
 
 const LeaderBoard = () => {
-    const { isAuthenticated, error } = useSelector((state) => state.auth);
+    const { isAuthenticated, error, credential } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();

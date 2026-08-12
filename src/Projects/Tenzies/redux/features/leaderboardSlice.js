@@ -7,8 +7,12 @@ import {
     limit,
     startAfter,
     getDocs,
-    where
+    where,
+    doc,
+    getDoc
 } from 'firebase/firestore/lite';
+
+import { formatFirebaseTimestamp } from '../../utils/DateTimeFormatting';
 
 
 const initialState = {
@@ -22,6 +26,60 @@ const initialState = {
     ITEMS_PER_PAGE: 3,
     error: false
 }
+
+export const fetchGlobalLeaderboard = createAsyncThunk(
+    'leaderboard/fetchGlobalLeaderboard',
+    async (_, { rejectWithValue }) => {
+        try {
+            const usersRef = collection(db, 'Tenzies', 'tenzies-database', 'Users');
+            const usersSnapshot = await getDocs(usersRef);
+
+            const userPromises = usersSnapshot.docs.map(async (userDoc) => {
+                const userData = userDoc.data();
+                const historyRef = doc(db, 'Tenzies', 'tenzies-database', 'Users', userDoc.id, 'Data', 'game-history');
+                const historySnapshot = await getDoc(historyRef);
+
+                if(historySnapshot.exists()) {
+                    const historyData = historySnapshot.data();
+                    
+                    // Only include users who have actually played (total_attempts > 0)
+                    if(historyData.total_attempts > 0 && historyData.fastest_time_taken != null) {
+                        return {
+                            id: userDoc.id,
+                            name: userData.name || userData.user_name || 'Anonymous',
+                            ...historyData,
+                            latest_attempt_at_formatted: typeof historyData.latest_attempt_at === 'string' 
+                                ? historyData.latest_attempt_at 
+                                : formatFirebaseTimestamp(historyData.latest_attempt_at)
+                        };
+                    }
+                }
+                return null;
+            });
+
+            const results = await Promise.all(userPromises);
+            
+            // Filter out nulls
+            let validUsers = results.filter(user => user !== null);
+
+            // Sort by fastest time taken (asc), then by lowest clicks (asc)
+            validUsers.sort((a, b) => {
+                if(a.fastest_time_taken === b.fastest_time_taken) {
+                    return a.lowest_clicks - b.lowest_clicks;
+                }
+                return a.fastest_time_taken - b.fastest_time_taken;
+            });
+
+            // Get top 10
+            return validUsers.slice(0, 10);
+            
+        } 
+        catch(error) {
+            console.error('Error fetching global leaderboard:', error);
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 export const fetchUserLogChunks = createAsyncThunk(
     'leaderboard/fetchUserLogChunks',
@@ -113,6 +171,17 @@ const leaderboardSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchGlobalLeaderboard.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchGlobalLeaderboard.fulfilled, (state, action) => {
+                state.loading = false;
+                state.globalLeaderboard = action.payload;
+            })
+            .addCase(fetchGlobalLeaderboard.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
             .addCase(fetchUserLogChunks.pending, (state) => {
                 state.loading = true;
             })
