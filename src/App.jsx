@@ -93,7 +93,7 @@ const App = () => {
                 <Route 
                     index 
                     element={<Tenzies.MainContent />}
-                    // loader={async ({request}) => dispatch(requireAuthUser(request))} 
+                    loader={async ({request}) => dispatch(requireAuthUser(request))} 
                 />
                 <Route 
                     path='login' 

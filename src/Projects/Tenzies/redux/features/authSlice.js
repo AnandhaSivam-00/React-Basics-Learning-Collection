@@ -6,10 +6,10 @@ import {
     signOut, 
     setPersistence, 
     browserLocalPersistence,
-    browserSessionPersistence,
     sendPasswordResetEmail,
     signInWithPopup,
     GoogleAuthProvider,
+    onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore/lite';
 
@@ -30,23 +30,40 @@ export const requireAuthUser = createAsyncThunk(
 
         try {
             // Create a Promise and immediately return its result
-            const user = await new Promise((resolve, reject) => {
-                const unsubscribe = auth.onAuthStateChanged((user) => {
-                    unsubscribe();
-                    if(user) {
-                        resolve(user);
-                    } 
-                    else {
-                        reject(new Error("Not authenticated"));
-                    }
-                });
-            });
+            // const user = await new Promise((resolve, reject) => {
+            //     const unsubscribe = auth.onAuthStateChanged((user) => {
+            //         unsubscribe();
+            //         if(user) {
+            //             resolve(user);
+            //         } 
+            //         else {
+            //             reject(new Error("Not authenticated"));
+            //         }
+            //     });
+            // });
             
-            // If we get here, authentication succeeded
-            return {
-                accessToken: user.accessToken,
-                uid: user.uid,
-            };
+            // // If we get here, authentication succeeded
+            // return {
+            //     accessToken: user.accessToken,
+            //     uid: user.uid,
+            // };
+
+            await auth.authStateReady();
+
+            const user = auth.currentUser;
+
+            if(user) {
+                return {
+                    accessToken: user.accessToken,
+                    uid: user.uid,
+                };
+            } 
+            else {
+                return rejectWithValue([
+                    'Authentication failed. Please login or create an account.',
+                    `/tenzies-game/login?message=You must login or create an account first!&redirectTo=${browserPath}`
+                ]);
+            }
         } 
         catch(error) {
             // Here we handle the rejected promise and call rejectWithValue
@@ -77,7 +94,7 @@ export const loginUserAction = createAsyncThunk(
     'user-auth/loginUserAction',
     async (loginData, { rejectWithValue }) => {
         try {
-            await setPersistence(auth, browserSessionPersistence);
+            await setPersistence(auth, browserLocalPersistence);
 
             const response = await signInWithEmailAndPassword(
                 auth,
@@ -106,7 +123,7 @@ export const signInUpGoogleAction = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         // Try to login with Google Sign-in method
         try {
-            await setPersistence(auth, browserSessionPersistence);
+            await setPersistence(auth, browserLocalPersistence);
 
             const response = await signInWithPopup(auth, new GoogleAuthProvider());
             const uid = response.user.uid;

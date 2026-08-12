@@ -56,6 +56,12 @@ const FeaturesBar = () => {
                 title: 'Logout Successful',
                 description: 'You have been logged out successfully. Now you can redirected to the login page.',
             })
+
+            const timer = setTimeout(() => {                                                                                                                   
+                navigate('/tenzies-game/login');                                                                                                               
+            }, 1500);                                                                                                                                          
+                                                                                                                                                               
+            return () => clearTimeout(timer);
         }
 
         if(error && typeof error === 'string') {
@@ -87,7 +93,7 @@ const FeaturesBar = () => {
                     <Tooltip title='Leaderboard' placement='top'>
                         <Button
                             className='px-2'
-                            href='tenzies-game/leaderboard'
+                            onClick={() => navigate('/tenzies-game/leaderboard')}
                         >
                             <LeaderboardIcon width={20} height={20} />
                         </Button>
