@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import Notification from './components/Notification';
 import LanguageChips from './components/LanguageChips';
 import { getRandomWord } from './assets/words';
-import { getRandomWordFromAI } from './assets/AiRandomWordGenerator';
+import { getRandomWordFromAI } from './assets/wordGenerator';
 
 /**
  * Try to use the useCallBack hook to memoize the function and avoid unnecessary re-renders
@@ -45,7 +45,7 @@ const MainGamePage = () => {
   // Derived value
   const wrongGuessedWordCount = guessedLetters.filter(letter => !currentWord.includes(letter)).length;
   const isGameOver = wrongGuessedWordCount >= languages.length - 1;
-  const isGameWon = currentWord.split("").every(letter => guessedLetters.includes(letter));
+  const isGameWon = currentWord && currentWord.split("").every(letter => guessedLetters.includes(letter));
 
   /**
    * To update the notification section, if the use clicks the wrong letter
@@ -108,6 +108,8 @@ const MainGamePage = () => {
 
   const handleNewGameButton = async () => {
     setGuessedLetters([]);
+    setCurrentWord('');
+    setLoading(true);
     
     // Optionally use AI word for next game
     try {
@@ -122,6 +124,9 @@ const MainGamePage = () => {
     catch (error) {
       console.error("Failed to get AI word:", error);
       setCurrentWord(getRandomWord());
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -146,7 +151,7 @@ const MainGamePage = () => {
       <button 
         className={`btn rounded m-1 keyboard-btn ${className}`}
         onClick={() => handleKeyClick(letter.toLowerCase())}
-        disabled={isGameOver || isGameWon}
+        disabled={isGameOver || isGameWon || loading}
         aria-disabled={guessedLetters.includes(letter)}
         aria-label={`Letter ${letter}`}
         key={index}
@@ -175,14 +180,14 @@ const MainGamePage = () => {
           )
         }
         <Header />
-        { guessedLetters.length > 0 && (
-          <Notification 
-            isGameWon={isGameWon} 
-            isGameOver={isGameOver}
-            isLatestGuessWrong={isLatestGuessWrong}
-            lostLanguageIndex={wrongGuessedWordCount - 1}
-          /> )
-        }
+
+        <Notification 
+          isGameWon={isGameWon} 
+          isGameOver={isGameOver}
+          isLatestGuessWrong={isLatestGuessWrong}
+          lostLanguageIndex={wrongGuessedWordCount > 0 ? wrongGuessedWordCount - 1 : 0}
+        />
+
         <div className='p-2 m-2'>
           <LanguageChips lostCount={wrongGuessedWordCount} />
         </div>
@@ -221,7 +226,7 @@ const MainGamePage = () => {
           { keyboardElement }
         </section>
         <div className='mt-4'>
-          { guessedLetters.length > 0 && (
+          {(isGameOver || isGameWon) && (
             <button 
               className='btn' 
               style={{backgroundColor: 'lightblue'}}
