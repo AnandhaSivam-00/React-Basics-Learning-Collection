@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import clsx from 'clsx';
 import Confetti from 'react-confetti-boom';
 import { languages } from './assets/languages';
@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import Notification from './components/Notification';
 import LanguageChips from './components/LanguageChips';
 import { getRandomWord } from './assets/words';
-import { getRandomWordFromAI } from './assets/AiRandomWordGenerator';
+import { getRandomWordFromAI } from './assets/wordGenerator';
 
 /**
  * Try to use the useCallBack hook to memoize the function and avoid unnecessary re-renders
@@ -35,7 +35,7 @@ const MainGamePage = () => {
       } 
       catch (error) {
         console.error("Error fetching AI word:", error);
-        setAiGeneratedWord("Error loading word");
+        // setAiGeneratedWord("Error loading word");
       }
     }
     
@@ -45,7 +45,7 @@ const MainGamePage = () => {
   // Derived value
   const wrongGuessedWordCount = guessedLetters.filter(letter => !currentWord.includes(letter)).length;
   const isGameOver = wrongGuessedWordCount >= languages.length - 1;
-  const isGameWon = currentWord.split("").every(letter => guessedLetters.includes(letter));
+  const isGameWon = currentWord && currentWord.split("").every(letter => guessedLetters.includes(letter));
 
   /**
    * To update the notification section, if the use clicks the wrong letter
@@ -56,19 +56,65 @@ const MainGamePage = () => {
   // Static value
   const alphabets = 'abcdefghijklmnopqrstuvwxyz';
 
-  const handleKeyClick = (letter) => {
+  const handleKeyClick = useCallback((letter) => {
     setGuessedLetters(prevLetters => 
       prevLetters.includes(letter) ? prevLetters : [...prevLetters, letter]
     );
-  }
+  }, []);
+
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Don't trigger if modifiers are pressed or we're in an input
+      if(e.ctrlKey || e.metaKey || e.altKey) return;
+      if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      const key = e.key.toLowerCase();
+      
+      // Handle letter guessing
+      if(/^[a-z]$/.test(key)) {
+        if(!isGameOver && !isGameWon) {
+          handleKeyClick(key);
+        }
+      }
+      
+      // Handle navigation
+      if(key === 'arrowright' || key === 'arrowleft') {
+        const buttons = Array.from(document.querySelectorAll('.keyboard-btn'));
+        if(buttons.length === 0) return;
+        
+        let currentIndex = buttons.findIndex(btn => btn === document.activeElement);
+        
+        if(currentIndex === -1) {
+          buttons[0].focus();
+        } 
+        else {
+          if(key === 'arrowright') {
+            const nextIndex = (currentIndex + 1) % buttons.length;
+            buttons[nextIndex].focus();
+          } 
+          else if(key === 'arrowleft') {
+            const prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+            buttons[prevIndex].focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyClick, isGameOver, isGameWon]);
+
 
   const handleNewGameButton = async () => {
     setGuessedLetters([]);
+    setCurrentWord('');
+    setLoading(true);
     
     // Optionally use AI word for next game
     try {
       const newWord = await getRandomWordFromAI();
-      if (newWord) {
+      if(newWord) {
         setCurrentWord(newWord.toLowerCase());
       } 
       else {
@@ -78,6 +124,9 @@ const MainGamePage = () => {
     catch (error) {
       console.error("Failed to get AI word:", error);
       setCurrentWord(getRandomWord());
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -100,9 +149,9 @@ const MainGamePage = () => {
       // If you make the button as a seperate component, then you cannot use the 'Tab' key to navigate through the buttons
       // So, it is better to keep the button as a single element
       <button 
-        className={`btn rounded m-1 ${className}`}
+        className={`btn rounded m-1 keyboard-btn ${className}`}
         onClick={() => handleKeyClick(letter.toLowerCase())}
-        disabled={isGameOver || isGameWon}
+        disabled={isGameOver || isGameWon || loading}
         aria-disabled={guessedLetters.includes(letter)}
         aria-label={`Letter ${letter}`}
         key={index}
@@ -131,21 +180,21 @@ const MainGamePage = () => {
           )
         }
         <Header />
-        { guessedLetters.length > 0 && (
-          <Notification 
-            isGameWon={isGameWon} 
-            isGameOver={isGameOver}
-            isLatestGuessWrong={isLatestGuessWrong}
-            lostLanguageIndex={wrongGuessedWordCount - 1}
-          /> )
-        }
+
+        <Notification 
+          isGameWon={isGameWon} 
+          isGameOver={isGameOver}
+          isLatestGuessWrong={isLatestGuessWrong}
+          lostLanguageIndex={wrongGuessedWordCount > 0 ? wrongGuessedWordCount - 1 : 0}
+        />
+
         <div className='p-2 m-2'>
           <LanguageChips lostCount={wrongGuessedWordCount} />
         </div>
         <section className='my-5 p-1'>
             {
               loading ? (
-                <p className='text-white m-2'>Wait... I'm loading the word using Gemini AI 🤪</p>
+                <p className='text-white m-2'>Wait... I&apos;m loading the word using Gemini AI 🤪</p>
               ) : (
                 !isGameOver ? (
                   currentWord.split("").map((letter, index) => (
@@ -177,7 +226,7 @@ const MainGamePage = () => {
           { keyboardElement }
         </section>
         <div className='mt-4'>
-          { guessedLetters.length > 0 && (
+          {(isGameOver || isGameWon) && (
             <button 
               className='btn' 
               style={{backgroundColor: 'lightblue'}}
