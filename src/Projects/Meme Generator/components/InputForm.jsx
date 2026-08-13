@@ -34,7 +34,7 @@ const InputForm = () => {
     }
 
   return (
-      <form onSubmit={getMemeImage}>
+      <form onSubmit={getMemeImage} className='container-sm'>
           <div className='row justify-content-center border rounded p-2 m-2'>
               <div className='col-12 col-md-6 col-sm-6 mt-2'>
                   <label htmlFor='topText' className='fw-bold'>Top Text</label>
@@ -42,6 +42,7 @@ const InputForm = () => {
                       type='text'
                       placeholder='Type here...'
                       name='topText'
+                      required
                       className='form-control mt-2'
                       onChange={handleInputChange}
                   />
@@ -52,6 +53,7 @@ const InputForm = () => {
                       type='text'
                       placeholder='Type here...'
                       name='bottomText'
+                      required
                       className='form-control mt-2'
                       onChange={handleInputChange}
                   />

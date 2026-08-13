@@ -10,12 +10,12 @@ export async function getRandomWordFromAI() {
             contents: [{
                 role: "user",
                 parts: [{
-                        text: "Generate a single random English word that is between 4-8 letters long. Return only the word, nothing else."
+                        text: "Generate a single random new English word that is between 4-8 letters long and a unique one, which makes the user to guess. (Bad examples: Planet, Solar, Water, Student, Classroom) Return only the word, nothing else."
                     }]
             }]
         });
 
-        return response.response.text().trim();
+        return response.response.text().trim().toLowerCase();
     }
     catch(error) {
         console.error(error.message);

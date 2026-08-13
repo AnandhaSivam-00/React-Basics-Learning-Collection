@@ -3,23 +3,24 @@
     width: 100%;
 }
 
+.notification-container {
+    width: 350px !important;
+    min-height: 80px;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
 .game-won {
     background-color: #10A95B;
-    width: 35%;
-    border-radius: 0.5rem;
 }
 
 .game-lost {
     background-color: #EC5D49;
-    width: 35%;
-    border-radius: 0.5rem;
 }
 
 .wrong-selection {
     background-color: #7A5EA7;
-    width: 75%;
-    border-radius: 0.5rem;
-    border: 1px dashed rgba(255, 255, 255, 0.927)
+    border: 1px dashed rgba(255, 255, 255, 0.927);
 }
 
 .language-section {
