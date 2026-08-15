@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import 'dotenv/config';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_GEMINI_MODEL_API);
 

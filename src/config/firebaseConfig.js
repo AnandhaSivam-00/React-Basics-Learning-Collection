@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
-import 'dotenv/config'
 
 // Initialize Firebase
 const app = initializeApp({
