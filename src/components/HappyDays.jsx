@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Divider } from 'antd';
 
 // Import AI-Generated Card Images
-import chiefMistralImg from '../assets/cards/chief_mistral.jpg';
-import reactFactsImg from '../assets/cards/react_facts.jpg';
-import travelJournalImg from '../assets/cards/travel_journal.jpg';
-import memeGeneratorImg from '../assets/cards/meme_generator.jpg';
-import tenziesGameImg from '../assets/cards/tenzies_game.jpg';
-import assemblyEndgameImg from '../assets/cards/assembly_endgame.jpg';
-import vansLifeImg from '../assets/cards/vans_life.jpg';
-import moodyImg from '../assets/cards/moody.jpg';
+import chiefMistralImg from '../assets/cards/chief_mistral.avif';
+import reactFactsImg from '../assets/cards/react_facts.avif';
+import travelJournalImg from '../assets/cards/travel_journal.avif';
+import memeGeneratorImg from '../assets/cards/meme_generator.avif';
+import tenziesGameImg from '../assets/cards/tenzies_game.avif';
+import assemblyEndgameImg from '../assets/cards/assembly_endgame.avif';
+import vansLifeImg from '../assets/cards/vans_life.avif';
+import moodyImg from '../assets/cards/moody.avif';
 
 const projects = [
   {
