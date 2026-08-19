@@ -1,5 +1,4 @@
 import {
-    app,
     db,
     auth
 } from '../../config/firebaseConfig';
@@ -49,11 +48,9 @@ export const getUserData = async (id) => {
 
 export const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider)
+    return await signInWithPopup(auth, provider)
         .then(async (result) => {
             console.log('Google login successful:', result.user.uid);
-
-            //await addNewUserData(result.user.uid);
 
             return {
                 success: true,
@@ -150,7 +147,7 @@ export const isUserloggedIn = () => {
     }
 }
 
-export const deleteUserAccountParmanent = async (id, photo_public_id) => {
+export const deleteUserAccountParmanent = async (id) => {
     const user = auth.currentUser;
 
     try {
