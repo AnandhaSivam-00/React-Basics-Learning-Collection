@@ -47,25 +47,48 @@ export const getUserData = async (id) => {
 }
 
 export const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    return await signInWithPopup(auth, provider)
-        .then(async (result) => {
-            console.log('Google login successful:', result.user.uid);
+    try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
 
-            return {
-                success: true,
-                message: 'Google login successful!',
-                credential: result.credential
-            }
-        })
-        .catch((error) => {
-            console.error('Error during Google login:', error);
+        const userRef = doc(db, 'Moody', 'moody-users-data', 'Users', user.uid);
+        const existing = await getDoc(userRef);
+
+        if(!existing.exists()) {
+            await setDoc(userRef, {
+                user_id: user.uid,
+                user_name: user.displayName || '',
+                phone_number: user.phoneNumber || '',
+                email: user.email || '',
+                photoURL: user.photoURL || '',
+                created_at: new Date(),
+                updated_at: new Date(),
+            });
+        }
+
+        return {
+            success: true,
+            message: 'Google login successful!',
+            credential: result,
+        };
+    }
+    catch(error) {
+        if(error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
             return {
                 success: false,
-                message: 'Google login failed. Please try again!',
-                error: error.message
-            }
-        })
+                message: 'Google sign-in was cancelled.',
+                error: error.message,
+            };
+        }
+
+        console.error('Error during Google login:', error);
+        return {
+            success: false,
+            message: error.message || 'Google login failed. Please try again!',
+            error: error.message,
+        };
+    }
 }
 
 export const loginAuthProvider = async ({ email, password }) => {

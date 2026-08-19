@@ -36,7 +36,7 @@ const MoodyLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loggedIn = auth.currentUser ? true : false;
+    const loggedIn = Boolean(auth.currentUser);
 
     if (actionData?.success) {
       const timer = setTimeout(() => {
@@ -74,9 +74,11 @@ const MoodyLogin = () => {
               className='btn google-login-btn'
               name='action'
               value='googleLogin'
+              formNoValidate
               disabled={navigation.state === 'submitting'}
             >
-              <GoogleIcon width={60} height={35} /> Sign in with Google
+              <GoogleIcon width={60} height={35} />
+              {navigation.state === 'submitting' ? 'Signing in...' : 'Sign in with Google'}
             </button>
           </div>
           <input

@@ -9,7 +9,7 @@ import {
   updateUserProfileData,
   loginAuthProvider,
   createNewUserProvider,
-  handleGoogleLogin
+  handleGoogleLogin,
 } from './dataFetchFunctions';
 
 // --- Login Loaders & Actions ---
