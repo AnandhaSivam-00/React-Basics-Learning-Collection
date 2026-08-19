@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Calistoga&display=swap');
+@import 'tailwindcss';
 
 .moody-login-container {
     width: 100%;
