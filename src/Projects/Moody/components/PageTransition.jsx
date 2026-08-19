@@ -1,13 +1,13 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 import { motion } from 'framer-motion' 
 
-const PageTransition = ({ children }) => {
+const PageTransition = ({ children = null }) => {
   const pageVariants = {
     pageIn: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 1,
+        duration: 0.6,
         ease: [0.6, -0.05, 0.01, 0.99]
       }
     }, 
@@ -36,5 +36,9 @@ const PageTransition = ({ children }) => {
     </motion.div>
   )
 }
+
+PageTransition.propTypes = {
+  children: PropTypes.node,
+};
 
 export default PageTransition
