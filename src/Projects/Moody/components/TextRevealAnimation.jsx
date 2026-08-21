@@ -1,12 +1,12 @@
-import React from 'react'
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
 import '../styles.css'
 
-const TextRevealAnimation = ({ text }) => {
+const TextRevealAnimation = ({ text = '' }) => {
   return (
     <div className='w-full'>
-            {text.split('').map((letter, index) => {
+            {String(text).split('').map((letter, index) => {
                 return (
                     <motion.span 
                         key={index} 
@@ -48,5 +48,9 @@ const TextRevealAnimation = ({ text }) => {
     </div>
   )
 }
+
+TextRevealAnimation.propTypes = {
+  text: PropTypes.string,
+};
 
 export default TextRevealAnimation

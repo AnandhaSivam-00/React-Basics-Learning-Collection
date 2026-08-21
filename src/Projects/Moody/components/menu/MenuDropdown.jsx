@@ -1,10 +1,10 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
+import PropTypes from 'prop-types'
 import { MenuContext } from './Menu'
 
 import '../../styles.css'
 
-
-const MenuDropdown = ({ children }) => {
+const MenuDropdown = ({ children = null }) => {
     const { isOpen } = useContext(MenuContext);
 
     return (
@@ -19,5 +19,9 @@ const MenuDropdown = ({ children }) => {
         ) : null
     );
 }
+
+MenuDropdown.propTypes = {
+    children: PropTypes.node,
+};
 
 export default MenuDropdown

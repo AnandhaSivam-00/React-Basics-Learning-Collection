@@ -12,7 +12,7 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 });
 
-const db = getFirestore(app);
+const db = getFirestore(app, 'default');
 const auth = getAuth(app);
 
 export { app, db, auth };

@@ -1,5 +1,4 @@
 import {
-    app,
     db,
     auth
 } from '../../config/firebaseConfig';
@@ -27,6 +26,7 @@ import {
     where,
     orderBy,
 } from 'firebase/firestore/lite';
+import crypto from 'crypto-js';
 
 export const getUserData = async (id) => {
     try {
@@ -48,27 +48,48 @@ export const getUserData = async (id) => {
 }
 
 export const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider)
-        .then(async (result) => {
-            console.log('Google login successful:', result.user.uid);
+    try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
 
-            //await addNewUserData(result.user.uid);
+        const userRef = doc(db, 'Moody', 'moody-users-data', 'Users', user.uid);
+        const existing = await getDoc(userRef);
 
-            return {
-                success: true,
-                message: 'Google login successful!',
-                credential: result.credential
-            }
-        })
-        .catch((error) => {
-            console.error('Error during Google login:', error);
+        if(!existing.exists()) {
+            await setDoc(userRef, {
+                user_id: user.uid,
+                user_name: user.displayName || '',
+                phone_number: user.phoneNumber || '',
+                email: user.email || '',
+                photoURL: user.photoURL || '',
+                created_at: new Date(),
+                updated_at: new Date(),
+            });
+        }
+
+        return {
+            success: true,
+            message: 'Google login successful!',
+            credential: result,
+        };
+    }
+    catch(error) {
+        if(error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
             return {
                 success: false,
-                message: 'Google login failed. Please try again!',
-                error: error.message
-            }
-        })
+                message: 'Google sign-in was cancelled.',
+                error: error.message,
+            };
+        }
+
+        console.error('Error during Google login:', error);
+        return {
+            success: false,
+            message: error.message || 'Google login failed. Please try again!',
+            error: error.message,
+        };
+    }
 }
 
 export const loginAuthProvider = async ({ email, password }) => {
@@ -76,18 +97,28 @@ export const loginAuthProvider = async ({ email, password }) => {
         //setPersistence(auth, browserLocalPersistence)
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
+        const emailQuery = query(
+            collection(db, 'Moody', 'moody-users-data', 'Users'),
+            where('email', '==', email)
+        );
+
+        const querySnapshot = await getDocs(emailQuery);
+        if(querySnapshot.empty) {
+            console.warn('No user profile found in database for this email');
+        }
+
         return {
             success: true,
             message: 'Login successful',
             credential: userCredential
         }
     }
-    catch (error) {
+    catch(error) {
         // console.error('Error during login:', error);
         return {
             success: false,
             code: error.code,
-            message: 'Login failed. Please check your credentials!',
+            message: error.message,
             credential: null
         }
     }
@@ -96,9 +127,20 @@ export const loginAuthProvider = async ({ email, password }) => {
 export const createNewUserProvider = async ({ email, password }) => {
     try {
         //setPersistence(auth, browserLocalPersistence)
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const emailQuery = query(
+            collection(db, 'Moody', 'moody-users-data', 'Users'),
+            where('email', '==', email)
+        );
+        
+        const querySnapshot = await getDocs(emailQuery);
+        if(!querySnapshot.empty) {
+            throw new Error('Email already exists in database!');
+        }
 
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
         const userRef = doc(db, 'Moody', 'moody-users-data', 'Users', userCredential.user.uid);
+        
         await setDoc(userRef, {
             user_id: userCredential.user.uid,
             user_name: "",
@@ -118,7 +160,7 @@ export const createNewUserProvider = async ({ email, password }) => {
         console.error('Error during user creation:', error);
         return {
             success: false,
-            message: 'User creation failed. Please try again!',
+            message: error.message || 'User creation failed. Please try again!',
             error: error.message
         }
     }
@@ -144,16 +186,41 @@ export const isUserloggedIn = () => {
             }
         })
     }
-    catch (error) {
+    catch(error) {
         console.error('Error checking user login status:', error);
         return false;
     }
 }
 
-export const deleteUserAccountParmanent = async (id, photo_public_id) => {
+export const deleteUserAccountParmanent = async (id, photoPublicID) => {
     const user = auth.currentUser;
 
     try {
+        if(photoPublicID) {
+            const timestamp = Math.round(new Date().getTime() / 1000);
+            const signature = crypto.SHA1(`public_id=${photoPublicID}&timestamp=${timestamp}${import.meta.env.VITE_CLOUDINARY_API_SECRET_KEY}`).toString();
+
+            const formData = new FormData();
+            formData.append('public_id', photoPublicID);
+            formData.append('timestamp', timestamp);
+            formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+            formData.append('signature', signature);
+
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/destroy`,
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+            const result = await response.json();
+            
+            if(result.result !== 'ok' && result.result !== 'not found') {
+                throw new Error('Failed to delete avatar from Cloudinary');
+            }
+        }
+
         await deleteUser(user)
 
         await deleteDoc(doc(db, 'Moody', 'moody-users-data', 'Users', id))
@@ -163,7 +230,7 @@ export const deleteUserAccountParmanent = async (id, photo_public_id) => {
             message: 'User account deleted permanently deleted from the database'
         }
     }
-    catch (error) {
+    catch(error) {
         console.error('Error occured during delete the user account from the database');
         return {
             success: false,

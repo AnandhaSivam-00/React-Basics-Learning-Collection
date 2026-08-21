@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { useDispatch } from 'react-redux';
 import {
     Route,
@@ -15,11 +15,8 @@ import { requireFirebaseAuth } from './Projects/Moody/requireFirebaseAuth.js';
 import { requireAuthUser } from './Projects/Tenzies/redux/features/authSlice.js';
 
 // Components Importing (Lazy Loading)
-const Wallet = lazy(() => import('./SampleReducer/Wallet'));
 
 const HappyDays = lazy(() => import('./components/HappyDays'));
-
-const Undrilling = lazy(() => import('../src/MealsListView/Undrilling'));
 
 const ReactFacts = lazy(() => import('./Projects/React Facts/ReactFacts'));
 
@@ -66,10 +63,15 @@ import { vanDetailsLoader } from './React Router Projects/VanLife/components/Van
 import { hostVansLoader } from './React Router Projects/VanLife/components/Host/HostVans.jsx'
 import { hostVanDetailLoader } from './React Router Projects/VanLife/components/Host/HostVansDetails.jsx'
 
-import { moodyBasicAction, moodyLoginLoader } from './Projects/Moody/pages/MoodyLogin.jsx'
-import { moodyPostAction, moodyPostLoader } from './Projects/Moody/pages/MoodyHome.jsx';
-import { moodyUpdateProfileAction, moodyUpdateProfileLoader } from './Projects/Moody/pages/UpdateProfile.jsx';
-import { moodyFeedsLoader } from './Projects/Moody/pages/Feeds.jsx';
+import {
+    moodyBasicAction,
+    moodyLoginLoader,
+    moodyPostAction,
+    moodyPostLoader,
+    moodyUpdateProfileAction,
+    moodyUpdateProfileLoader,
+    moodyFeedsLoader
+} from './Projects/Moody/moodyApi.js';
 
 import PageTransition from './Projects/Moody/components/PageTransition.jsx';
 
