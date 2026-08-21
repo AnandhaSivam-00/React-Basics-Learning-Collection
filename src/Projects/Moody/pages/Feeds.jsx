@@ -4,20 +4,10 @@ import { Await, useLoaderData } from 'react-router-dom';
 import { Divider } from 'antd'
 
 import '../styles.css'
-import { requireFirebaseAuth } from '../requireFirebaseAuth';
-import { getAllUserPostData } from '../dataFetchFunctions';
 
-const MoodyPostCard = lazy(() => import('../components/MoodyPostCard'));
 import TextRevealAnimation from '../components/TextRevealAnimation';
 import PageTransition from '../components/PageTransition';
-
-export const moodyFeedsLoader = async ({ request }) => {
-  await requireFirebaseAuth(request);
-
-  return {
-    feedsData: getAllUserPostData()
-  }
-}
+const MoodyPostCard = lazy(() => import('../components/MoodyPostCard'));
 
 const Feeds = () => {
   const { feedsData } = useLoaderData();

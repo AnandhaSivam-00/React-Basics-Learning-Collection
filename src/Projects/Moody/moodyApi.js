@@ -1,4 +1,5 @@
 import { Server } from 'miragejs';
+import { defer } from '@remix-run/router';
 import { auth } from '../../config/firebaseConfig';
 import { requireFirebaseAuth } from './requireFirebaseAuth';
 import {
@@ -115,9 +116,9 @@ export const moodyBasicAction = async ({ request }) => {
 export const moodyPostLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
 
-  return {
+  return defer({
     postData: getUserPosts(auth.currentUser?.uid)
-  };
+  });
 };
 
 export const moodyPostAction = async ({ request }) => {
@@ -161,18 +162,18 @@ export const moodyPostAction = async ({ request }) => {
 export const moodyFeedsLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
 
-  return {
+  return defer({
     feedsData: getAllUserPostData()
-  };
+  });
 };
 
 // --- Profile Update Loader & Action ---
 export const moodyUpdateProfileLoader = async ({ request }) => {
   await requireFirebaseAuth(request);
   
-  return {
+  return defer({
     data: getUserData(auth.currentUser?.uid)
-  };
+  });
 };
 
 export const moodyUpdateProfileAction = async ({ request }) => {
