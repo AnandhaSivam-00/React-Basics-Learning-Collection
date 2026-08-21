@@ -26,6 +26,7 @@ import {
     where,
     orderBy,
 } from 'firebase/firestore/lite';
+import crypto from 'crypto-js';
 
 export const getUserData = async (id) => {
     try {
@@ -170,10 +171,36 @@ export const isUserloggedIn = () => {
     }
 }
 
-export const deleteUserAccountParmanent = async (id) => {
+export const deleteUserAccountParmanent = async (id, photoPublicID) => {
     const user = auth.currentUser;
 
     try {
+        if (photoPublicID) {
+            const timestamp = Math.round(new Date().getTime() / 1000);
+            const paramsToSign = `public_id=${photoPublicID}&timestamp=${timestamp}${import.meta.env.VITE_CLOUDINARY_API_SECRET_KEY}`;
+            const signature = crypto.SHA1(paramsToSign).toString();
+
+            const formData = new FormData();
+            formData.append('public_id', photoPublicID);
+            formData.append('timestamp', timestamp);
+            formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+            formData.append('signature', signature);
+
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/destroy`,
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.result !== 'ok' && result.result !== 'not found') {
+                throw new Error('Failed to delete avatar from Cloudinary');
+            }
+        }
+
         await deleteUser(user)
 
         await deleteDoc(doc(db, 'Moody', 'moody-users-data', 'Users', id))

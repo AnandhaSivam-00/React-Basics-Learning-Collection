@@ -75,7 +75,7 @@ const UpdateProfile = () => {
                     content: 'Deleting account...'
                 });
 
-                const processData = await deleteUserAccountParmanent(userData?.uid);
+                const processData = await deleteUserAccountParmanent(userData?.uid, avatarURL?.public_id || userData?.data?.photo_public_id);
 
                 if(processData.success) {
                     message.open({
@@ -97,7 +97,7 @@ const UpdateProfile = () => {
                 }
             }
         });
-    }, [userData, setUserData]);
+    }, [userData, setUserData, avatarURL]);
 
     const handleImageUpload = useCallback(async (file) => {
         if(!file) return;
