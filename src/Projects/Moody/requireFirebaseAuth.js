@@ -1,5 +1,5 @@
 import { auth } from '../../config/firebaseConfig';
-import { redirect } from "@remix-run/router";
+import { redirect } from 'react-router-dom';
 
 export const requireFirebaseAuth = async (request) => {
     const browserPath = new URL(request.url).pathname;

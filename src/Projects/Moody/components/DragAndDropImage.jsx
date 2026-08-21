@@ -1,12 +1,17 @@
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback, memo } from 'react'
+import PropTypes from 'prop-types'
 import { Avatar, Button, Tooltip } from 'antd'
 import { motion } from 'framer-motion'
 
 import { AvatarDefaultIcon } from '../../../assets/Icons'
 import { DeleteBucketIcon, UploadCloudIcon } from '../assets/Icons'
-import { auth } from '../../../config/firebaseConfig'
 
-const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvatarURL }) => {
+const DragAndDropImage = ({
+    handleImageUpload = () => {},
+    avatarUrl = '',
+    uploadStatus = false,
+    setAvatarURL = () => {}
+}) => {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragOver = useCallback((e) => {
@@ -26,12 +31,10 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
 
     const handleDeleteAvatar = useCallback(async () => {
         try {
-            // await deleteAvatar(auth.currentUser.uid); 
             setAvatarURL({
                 photo_url: "",
                 public_id: ""
             });
-            console.log('Avatar deleted successfully!');
         }
         catch(error) {
             console.error('Error deleting avatar:', error);
@@ -112,4 +115,11 @@ const DragAndDropImage = ({ handleImageUpload, avatarUrl, uploadStatus, setAvata
     )
 }
 
-export default React.memo(DragAndDropImage);
+DragAndDropImage.propTypes = {
+    handleImageUpload: PropTypes.func,
+    avatarUrl: PropTypes.string,
+    uploadStatus: PropTypes.bool,
+    setAvatarURL: PropTypes.func,
+};
+
+export default memo(DragAndDropImage);

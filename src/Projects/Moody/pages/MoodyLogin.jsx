@@ -1,131 +1,18 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import {
   Form,
   useActionData,
   useLoaderData,
   useNavigate,
   useNavigation,
-  useSearchParams
 } from 'react-router-dom'
-import { Server } from 'miragejs'
 import { motion } from 'framer-motion'
 
 import { GoogleIcon } from '../assets/Icons'
 import { auth } from '../../../config/firebaseConfig'
-import {
-  loginAuthProvider,
-  createNewUserProvider,
-  isUserloggedIn,
-  handleGoogleLogin,
-} from '../dataFetchFunctions'
-
 import TextRevealAnimation from '../components/TextRevealAnimation'
-
+import LoginBgImage from '../assets/login-bg-image.webp'
 import '../styles.css'
-
-export const moodyLoginLoader = async ({ request }) => {
-  const url = new URL(request.url);
-
-  return {
-    success: false,
-    message: url.searchParams.get('message'),
-    redirectTo: url.searchParams.get('redirectTo') || '/moody/home',
-  }
-}
-
-export const moodyBasicAction = async ({ request }) => {
-  const userCredentials = await request.formData();
-
-  const email = userCredentials.get('email');
-  const password = userCredentials.get('password');
-  const actionType = userCredentials.get('action');
-
-  // Disable the mirage server for firebase authentication
-  if (window.server instanceof Server) {
-    window.server.shutdown();
-  }
-
-  if (actionType === 'login') {
-    return moodyLoginAction({ email, password });
-  }
-  else if (actionType === 'createUser') {
-    return moodyCreateUser({ email, password });
-  }
-  else if (actionType === 'googleLogin') {
-    return moodyGoogleLoginAction();
-  }
-  else {
-    return {
-      success: false,
-      error: 'Invalid action type'
-    }
-  }
-}
-
-const moodyGoogleLoginAction = async () => {
-  try {
-    const response = await handleGoogleLogin();
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-    const { credential } = response;
-    console.log('Google login successful:', credential);
-
-    return {
-      success: true,
-      message: 'Login successful! Now you are redirected to home page! 👋🏽',
-    }
-  }
-  catch (error) {
-    return {
-      success: false,
-      error: error.message
-    }
-  }
-}
-
-const moodyLoginAction = async ({ email, password }) => {
-  try {
-    const response = await loginAuthProvider({ email, password });
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-    const { credential } = response;
-    console.log('Login successful:', credential);
-
-    return {
-      success: true,
-      message: 'Login successful! Now you are redirected to home page! 👋🏽',
-    }
-  }
-  catch (error) {
-    // console.log(error.message);
-    return {
-      success: false,
-      error: error.message
-    }
-  }
-}
-
-const moodyCreateUser = async ({ email, password }) => {
-  try {
-    const response = await createNewUserProvider({ email, password });
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    return {
-      success: true,
-      message: 'User created successfully'
-    }
-  }
-  catch (error) {
-    return {
-      success: false,
-      error: error.message
-    }
-  }
-}
 
 const messageAnimationVariants = {
   initial: {
@@ -149,28 +36,32 @@ const MoodyLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loggedIn = auth.currentUser ? true : false;
+    const loggedIn = Boolean(auth.currentUser);
 
     if (actionData?.success) {
-      setTimeout(() => {
-        if(!auth.currentUser.displayName && !auth.currentUser.photoURL) {
-          navigate('/home/profile-update', { replace: true });
+      const timer = setTimeout(() => {
+        if (auth.currentUser && !auth.currentUser.displayName && !auth.currentUser.photoURL) {
+          navigate('/moody/home/profile-update', { replace: true });
         }
         else {
-          navigate(loaderData.redirectTo, { replace: true });
+          navigate(loaderData?.redirectTo || '/moody/home', { replace: true });
         }
       }, 1000);
+
+      return () => clearTimeout(timer);
     }
     else if (loggedIn) {
       navigate('/moody/home', { replace: true });
     }
-  }, [actionData, navigate]);
+  }, [actionData, loaderData?.redirectTo, navigate]);
 
   return (
-    <section className='moody-login-container'>
-      <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+    <section className='moody-login-container d-flex justify-content-start align-items-center pt-5'>
+      <img src={LoginBgImage} alt='Login Background' className='moody-login-bg position-absolute top-0 end-0 img-fluid' />
+
+      <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto', zIndex: 1 }}>
         <h1 className='moody-login-title text-center'>
-          <TextRevealAnimation text='Moody Enterance' />
+          <TextRevealAnimation text='Moody Entrance' />
         </h1>
         <Form
           method='POST'
@@ -183,9 +74,11 @@ const MoodyLogin = () => {
               className='btn google-login-btn'
               name='action'
               value='googleLogin'
+              formNoValidate
               disabled={navigation.state === 'submitting'}
             >
-              <GoogleIcon width={60} height={35} /> Sign in with Google
+              <GoogleIcon width={60} height={35} />
+              {navigation.state === 'submitting' ? 'Signing in...' : 'Sign in with Google'}
             </button>
           </div>
           <input
