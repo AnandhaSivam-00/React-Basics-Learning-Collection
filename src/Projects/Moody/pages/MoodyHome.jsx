@@ -1,15 +1,14 @@
-import React, {
+import {
   lazy,
   useState,
   useEffect,
   Suspense,
-  useCallback,
   useMemo,
   memo
 } from 'react'
+import PropTypes from 'prop-types'
 import {
   useFetcher,
-  useActionData,
   useLoaderData,
   useNavigation,
   Await,
@@ -26,109 +25,153 @@ import MoodGood from '../assets/mood-4.png';
 import MoodAmazing from '../assets/mood-5.png';
 import '../styles.css'
 
-import { addNewPostData } from '../dataFetchFunctions';
-import { auth } from '../../../config/firebaseConfig';
-
-import { getUserPosts } from '../dataFetchFunctions';
-import { requireFirebaseAuth } from '../requireFirebaseAuth';
 import TextRevealAnimation from '../components/TextRevealAnimation';
 import PageTransition from '../components/PageTransition';
 
-export const moodyPostLoader = async ({ request }) => {
-  await requireFirebaseAuth(request);
+// Subcomponent to safely render post list and filters without breaking hook rules
+const PostList = ({ posts = [], filter = null, onFilterChange = () => {} }) => {
+  const filteredPosts = useMemo(() => {
+    if(!posts || !Array.isArray(posts) || !filter) return posts || [];
 
-  return {
-    postData: getUserPosts(auth.currentUser.uid)
-  }
-}
+    const now = new Date();
 
-export const moodyPostAction = async ({ request }) => {
-  const postData = await request.formData();
-  const mood = postData.get('mood');
-  const post = postData.get('post');
+    switch(filter) {
+      case 'today':
+        return posts.filter(post => {
+          if(!post?.created_at?.seconds) return false;
+          const postDate = new Date(post.created_at.seconds * 1000);
+          return postDate.toDateString() === now.toDateString();
+        });
 
-  // console.log(mood, post);
-
-  if (!mood || !post) {
-    return {
-      success: false,
-      message: 'Mood and post are required.',
-    }
-  }
-
-  if (post.length < 10) {
-    return {
-      success: false,
-      message: 'Mood is too long.',
-    }
-  }
-
-  try {
-    const response = await addNewPostData({ mood, post });
-
-    if (response.success) {
-      return {
-        success: true,
-        message: response.message,
+      case 'week': {
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return posts.filter(post => {
+          if(!post?.created_at?.seconds) return false;
+          const postDate = new Date(post.created_at.seconds * 1000);
+          return postDate >= oneWeekAgo;
+        });
       }
+
+      case 'month':
+        return posts.filter(post => {
+          if(!post?.created_at?.seconds) return false;
+          const postDate = new Date(post.created_at.seconds * 1000);
+          return (
+            postDate.getMonth() === now.getMonth() &&
+            postDate.getFullYear() === now.getFullYear()
+          );
+        });
+
+      default:
+        return posts;
     }
-    else {
-      return {
-        success: false,
-        message: response.message,
-      }
-    }
-  }
-  catch (error) {
-    console.error('Error posting mood:', error);
-    return {
-      success: false,
-      message: 'Failed to post mood. Please try again later.',
-      error_code: error.code,
-    }
-  }
-}
+  }, [posts, filter]);
+
+  return (
+    <>
+      <div className='d-flex flex-row justify-content-start align-items-center gap-3 moody-filter-section mt-4 mb-3'>
+        <button
+          type='button'
+          className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
+            ${filter === 'today' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
+          onClick={() => onFilterChange('filterby', 'today')}
+        >
+          Today
+        </button>
+        <button
+          type='button'
+          className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
+            ${filter === 'week' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
+          onClick={() => onFilterChange('filterby', 'week')}
+        >
+          Week
+        </button>
+        <button
+          type='button'
+          className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
+            ${filter === 'month' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
+          onClick={() => onFilterChange('filterby', 'month')}
+        >
+          Month
+        </button>
+        <button
+          type='button'
+          className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
+            ${filter === null ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
+          onClick={() => onFilterChange('filterby', null)}
+        >
+          All
+        </button>
+      </div>
+      <div className='moody-postlist-section pe-1'>
+        {filteredPosts && filteredPosts.length > 0 ? (
+          filteredPosts.map((items, index) => (
+            <MoodyPostCard
+              key={items.id || index}
+              index={index}
+              mood={items.user_mood}
+              post={items.body}
+              date={items.created_at}
+            />
+          ))
+        ) : (
+          <div className='text-center text-secondary py-4'>
+            No posts available. Start your mood journey now!
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+
+PostList.propTypes = {
+  posts: PropTypes.array,
+  filter: PropTypes.string,
+  onFilterChange: PropTypes.func,
+};
 
 const MoodyHome = () => {
   const [currentMood, setCurrentMood] = useState('');
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [postBody, setPostBody] = useState('');
 
   const { postData } = useLoaderData();
-  const actionData = useActionData();
   const navigation = useNavigation();
-  const fetcher = useFetcher(); // Using the fetcher to submit the form data without redirecting the page
-  // Instead of using the <Form> component, we are using the fetcher to submit the form data
+  const fetcher = useFetcher();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const filter = searchParams.get('filterby');
 
   useEffect(() => {
-    if (actionData) {
-      if (actionData.success) {
-        message.success(actionData.message);
-        setCurrentMood('');
-        document.getElementById('post').value = '';
+    if (fetcher.data?.message) {
+      if (fetcher.data.success) {
+        message.success(fetcher.data.message);
       }
       else {
-        message.error(actionData.message);
+        message.error(fetcher.data.message || 'Failed to submit post');
       }
     }
-  }, [actionData]);
+  }, [fetcher.data]);
 
-  const handleMoodClick = useCallback((moodName) => {
+  const handleMoodClick = (moodName) => {
     setCurrentMood(moodName);
-  }, [setCurrentMood])
+  };
 
-  const handleMoodPost = useCallback((e) => {
+  const handleMoodPost = (e) => {
     e.preventDefault();
 
-    const postBody = document.getElementById('post').value.replace(/\n/g, '<br />');
-    // Fetching the post body and replacing the new line with <br /> tag -- g stands for global
-    // and it will replace all the new line with <br /> tag
+    if (!currentMood) {
+      message.warning('Please select a mood first!');
+      return;
+    }
+
+    if (postBody.trim().length < 10) {
+      message.warning('Post must be at least 10 characters long.');
+      return;
+    }
 
     Modal.confirm({
-      title: 'Action confirmation needed for Posting',
-      content: `Are you sure you want to post the content. If the post is posted then you can't able to edit or delete it!`,
+      title: 'Post Confirmation',
+      content: 'Are you sure you want to share this entry? Once posted, you cannot edit or delete it.',
       className: 'post-confirmation-modal',
       okText: 'Post Anyway',
       cancelText: 'Cancel',
@@ -141,130 +184,33 @@ const MoodyHome = () => {
           {
             method: 'post',
           }
-        )
-
-        document.getElementById('mood-form-submit').reset();
+        );
         setCurrentMood('');
+        setPostBody('');
       }
-    })
-  }, [currentMood, fetcher]);
+    });
+  };
 
-  // Function to filter posts based on date
-  const filterPostsByDate = useCallback((posts, filterType) => {
-    if (!posts || !filterType) return posts;
+  const handleFilterChange = (key, value) => {
+    setSearchParams(prevSearch => {
+      const nextSearch = new URLSearchParams(prevSearch);
+      if (value === null) {
+        nextSearch.delete(key);
+      }
+      else {
+        nextSearch.set(key, value);
+      }
+      return nextSearch;
+    });
+  };
 
-    const now = new Date();
-
-    switch (filterType) {
-      case 'today':
-        // Filter posts from today
-        return posts.filter(post => {
-          const postDate = new Date(post.created_at.seconds * 1000);
-          return postDate.toDateString() === now.toDateString();
-        });
-
-      case 'week':
-        // Filter posts from the past 7 days
-        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return posts.filter(post => {
-          const postDate = new Date(post.created_at.seconds * 1000);
-          return postDate >= oneWeekAgo;
-        });
-
-      case 'month':
-        // Filter posts from the current month
-        return posts.filter(post => {
-          const postDate = new Date(post.created_at.seconds * 1000);
-          return (
-            postDate.getMonth() === now.getMonth() &&
-            postDate.getFullYear() === now.getFullYear()
-          );
-        });
-
-      default:
-        return posts;
-    }
-  }, []);
-
-  const renderPosts = useCallback((postData) => {
-    useEffect(() => {
-      const filteredPosts = filterPostsByDate(postData, filter);
-      setFilteredPosts(filteredPosts);
-    }, [postData, filter, filterPostsByDate]);
-
-    const handleFilterChange = (key, value) => {
-      setSearchParams(prevSearch => {
-        if (value === null) {
-          prevSearch.delete(key)
-        }
-        else {
-          prevSearch.set(key, value);
-        }
-
-        return prevSearch;
-      })
-    };
-
-    const filteredPostsDetails = filteredPosts.map((items, index) => (
-      <MoodyPostCard
-        key={items.id}
-        index={index}
-        mood={items.user_mood}
-        post={items.body}
-        date={items.created_at}
-      />
-    ));
-
-    return (
-      <>
-        <div className='d-flex flex-row justify-content-start align-items-center gap-3 moody-filter-section mt-4 mb-3'>
-          <button
-            className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
-              ${filter === 'today' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
-            onClick={() => handleFilterChange('filterby', 'today')}
-          >
-            Today
-          </button>
-          <button
-            className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
-              ${filter === 'week' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
-            onClick={() => handleFilterChange('filterby', 'week')}
-          >
-            Week
-          </button>
-          <button
-            className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
-              ${filter === 'month' ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
-            onClick={() => handleFilterChange('filterby', 'month')}
-          >
-            Month
-          </button>
-          <button
-            className={`btn moody-secondary-btn box-border rounded moody-filter-btn 
-              ${filter === null ? 'bg-black text-white fw-bolder font-monospace' : ''}`}
-            onClick={() => handleFilterChange('filterby', null)}
-          >
-            All
-          </button>
-        </div>
-        <div className='moody-postlist-section pe-1'>
-          {filteredPostsDetails.length > 0 ? (
-            filteredPostsDetails
-          ) : (
-            <div className='text-center text-secondary'>
-              No posts available. Start your mood journey now!
-            </div>
-          )}
-        </div>
-      </>
-    )
-  }, [filterPostsByDate, filteredPosts, filter, setSearchParams]);
+  const isSubmitting = navigation.state === 'submitting' || fetcher.state === 'submitting';
 
   return (
     <PageTransition>
       <section
         className='d-flex flex-column justify-content-center align-items-center gap-3'
-        style={{ marginTop: '10rem' }}
+        style={{ marginTop: '8rem', marginBottom: '4rem' }}
       >
         <h1 className='text-center'>
           <TextRevealAnimation text='Welcome to Moody' />
@@ -277,22 +223,24 @@ const MoodyHome = () => {
         >
           <div className='d-flex flex-row justify-content-center align-items-center gap-2 mb-2 moody-reaction-section'>
             <button
+              type='button'
               className={`btn mood-reaction-btn ${currentMood === 'Awful' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
               onClick={() => handleMoodClick('Awful')}
-              disabled={navigation.state === 'submitting'}
+              disabled={isSubmitting}
             >
               <img
                 src={MoodAwful}
-                alt='Mood Sad'
+                alt='Mood Awful'
                 className='mood-icon'
                 loading='lazy'
               />
               <span className='mood-text'>Awful</span>
             </button>
             <button
+              type='button'
               className={`btn mood-reaction-btn ${currentMood === 'Bad' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
               onClick={() => handleMoodClick('Bad')}
-              disabled={navigation.state === 'submitting'}
+              disabled={isSubmitting}
             >
               <img
                 src={MoodBad}
@@ -303,9 +251,10 @@ const MoodyHome = () => {
               <span className='mood-text'>Bad</span>
             </button>
             <button
+              type='button'
               className={`btn mood-reaction-btn ${currentMood === 'Meh' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
               onClick={() => handleMoodClick('Meh')}
-              disabled={navigation.state === 'submitting'}
+              disabled={isSubmitting}
             >
               <img
                 src={MoodMeh}
@@ -316,9 +265,10 @@ const MoodyHome = () => {
               <span className='mood-text'>Meh</span>
             </button>
             <button
+              type='button'
               className={`btn mood-reaction-btn ${currentMood === 'Good' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
               onClick={() => handleMoodClick('Good')}
-              disabled={navigation.state === 'submitting'}
+              disabled={isSubmitting}
             >
               <img
                 src={MoodGood}
@@ -329,9 +279,10 @@ const MoodyHome = () => {
               <span className='mood-text'>Good</span>
             </button>
             <button
+              type='button'
               className={`btn mood-reaction-btn ${currentMood === 'Amazing' || currentMood === '' ? '' : 'mood-reaction-btn-disabled'}`}
               onClick={() => handleMoodClick('Amazing')}
-              disabled={navigation.state === 'submitting'}
+              disabled={isSubmitting}
             >
               <img
                 src={MoodAmazing}
@@ -346,41 +297,42 @@ const MoodyHome = () => {
           <form
             onSubmit={handleMoodPost}
             id='mood-form-submit'
+            className='w-100'
           >
-            <input
-              type='hidden'
-              name='mood'
-              defaultValue={currentMood}
-              required
-            />
             <textarea
               cols={40}
-              rows={10}
+              rows={5}
               name='post'
               id='post'
+              value={postBody}
+              onChange={(e) => setPostBody(e.target.value)}
               className='form-control google-login-btn'
               style={{ height: '150px', maxHeight: '270px', resize: 'none' }}
-              placeholder='Write about your day...'
+              placeholder='Write about your day (min 10 characters)...'
               required
-            >
-            </textarea>
+            />
             <button
               type='submit'
               className='btn moody-primary-btn box-border mt-3'
-              disabled={navigation.state === 'submitting' || currentMood === ''}
+              disabled={isSubmitting || currentMood === '' || postBody.trim().length < 10}
             >
-              {navigation.state === 'submitting' ? 'Posting...' : 'Post'}
+              {isSubmitting ? 'Posting...' : 'Post'}
             </button>
           </form>
-          <div className='w-100'>
+          <div className='w-100 mt-2'>
             <Suspense fallback={
               <div className='text-center text-secondary my-5'>
                 <span className='moody-loading-text-style'>Loading my Mood...</span>
               </div>
             }>
-            {/* No need for Await, the Suspense automatically unwraps the promises */}
               <Await resolve={postData}>
-                {renderPosts}
+                {(resolvedPosts) => (
+                  <PostList
+                    posts={resolvedPosts}
+                    filter={filter}
+                    onFilterChange={handleFilterChange}
+                  />
+                )}
               </Await>
             </Suspense>
           </div>
@@ -390,4 +342,4 @@ const MoodyHome = () => {
   )
 }
 
-export default React.memo(MoodyHome);
+export default memo(MoodyHome);
